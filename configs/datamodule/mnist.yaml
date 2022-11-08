@@ -1,5 +1,5 @@
-_target_: src.datamodules.mnist_datamodule.MNISTDataModule
-data_dir: ${paths.data_dir}
+_target_: src.datamodules.classification.modelnet2048_module.ModelNet2048DataModule
+data_dir: ${paths.data_dir}/modelnet2048
 batch_size: 128
 train_val_test_split: [55_000, 5_000, 10_000]
 num_workers: 0
