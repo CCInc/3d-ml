@@ -5,10 +5,10 @@
 defaults:
   - _self_
   - datamodule: mnist.yaml
-  - model: mnist.yaml
+  - model: pointnet++.yaml
   - callbacks: default.yaml
   - logger: null # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
-  - trainer: default.yaml
+  - trainer: gpu.yaml
   - paths: default.yaml
   - extras: default.yaml
   - hydra: default.yaml

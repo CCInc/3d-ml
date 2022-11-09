@@ -17,9 +17,8 @@ class ModelNet2048Dataset(Dataset):
             with h5py.File(h5_name, 'r') as f:
                 xyzs = f['data'][:].astype('float32')
                 labels = f['label'][:].astype('int64')
-                # print(xyz.shape, label.shape)
                 for xyz, label in zip(xyzs, labels):
-                    all_data.append(Data(pos=torch.from_numpy(xyz), y=torch.from_numpy(label)))
+                    all_data.append(Data(pos=torch.from_numpy(xyz), y=int(label[0])))
 
         return all_data
 

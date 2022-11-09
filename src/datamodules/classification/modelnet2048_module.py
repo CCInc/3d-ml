@@ -10,10 +10,11 @@ from src.datamodules.components.download import download_and_extract_archive
 
 import h5py
 import numpy as np
+from src.utils.batch import SimpleBatch
 
 import torch
 from pytorch_lightning import LightningDataModule
-from torch_geometric.loader import DataLoader
+from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
 
@@ -45,7 +46,7 @@ class ModelNet2048DataModule(LightningDataModule):
 
     @property
     def num_classes(self):
-        return 10
+        return 40
 
     def prepare_data(self):
         """Download data if needed.
@@ -68,6 +69,7 @@ class ModelNet2048DataModule(LightningDataModule):
 
     def train_dataloader(self):
         return DataLoader(
+            collate_fn=SimpleBatch.from_data_list,
             dataset=self.data_train,
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.num_workers,
