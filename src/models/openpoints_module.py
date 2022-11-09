@@ -69,7 +69,7 @@ class OpenPointsModule(LightningModule):
         if x:
             x = x.transpose(1, 2).contiguous()
 
-        print(y.shape)
+        # print(y.shape)
         logits = self.forward({"pos": pos, "x": x})
         loss = self.criterion(logits, y)
         preds = torch.argmax(logits, dim=1)
@@ -80,10 +80,11 @@ class OpenPointsModule(LightningModule):
 
         # update and log metrics
         self.train_loss(loss)
-        print(preds, targets)
+        # print(preds, targets)
         self.train_acc(preds, targets)
-        self.log("train/loss", self.train_loss, on_step=False, on_epoch=True, prog_bar=True)
-        self.log("train/acc", self.train_acc, on_step=False, on_epoch=True, prog_bar=True)
+        # print(self.train_acc)
+        self.log("train/loss", self.train_loss, on_step=True, on_epoch=True, prog_bar=True)
+        self.log("train/acc", self.train_acc, on_step=True, on_epoch=True, prog_bar=True)
 
         # we can return here dict with any tensors
         # and then read it in some callback or in `training_epoch_end()` below
