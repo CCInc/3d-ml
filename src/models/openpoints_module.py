@@ -1,14 +1,16 @@
 from typing import Any, List
 
-import torch
-from torch_geometric.data import Batch
 import omegaconf
+import torch
 from pytorch_lightning import LightningModule
+from torch_geometric.data import Batch
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
-from openpoints.utils import EasyConfig
+
 from openpoints.models import build_model_from_cfg
 from src.utils import pylogger
+from openpoints.utils import EasyConfig
+
 
 log = pylogger.get_pylogger(__name__)
 
