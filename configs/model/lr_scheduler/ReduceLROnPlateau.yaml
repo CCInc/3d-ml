@@ -5,6 +5,6 @@ scheduler:
   factor: 0.1
   patience: 10
 config:
-  monitor: ${data.monitor_split}/loss
+  monitor: ${task.monitor_split}/loss
   interval: epoch
   frequency: 1

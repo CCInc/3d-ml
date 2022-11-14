@@ -1,3 +1,6 @@
+defaults:
+  - default
+
 monitor_split: train
 
 datamodule:

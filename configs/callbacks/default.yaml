@@ -8,13 +8,13 @@ defaults:
 model_checkpoint:
   dirpath: ${paths.output_dir}/checkpoints
   filename: "epoch_{epoch:03d}"
-  monitor: ${data.monitor_split}/${task.monitor_metric}
+  monitor: ${task.monitor_split}/${task.monitor_metric}
   mode: ${task.monitor_metric_mode}
   save_last: True
   auto_insert_metric_name: False
 
 early_stopping:
-  monitor: ${data.monitor_split}/${task.monitor_metric}
+  monitor: ${task.monitor_split}/${task.monitor_metric}
   patience: 100
   mode: ${task.monitor_metric_mode}
 

@@ -2,3 +2,4 @@ name: classification
 
 monitor_metric: acc
 monitor_metric_mode: max
+monitor_split: ${data.monitor_split}

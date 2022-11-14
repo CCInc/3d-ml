@@ -56,7 +56,9 @@ class OpenPointsModule(LightningModule):
         self.val_loss = MeanMetric()
         self.test_loss = MeanMetric()
 
-        # for tracking best so far validation accuracy
+        # tracking best metrics, for use in hyperparameter optimization
+        self.train_acc_best = MaxMetric()
+        self.val_acc_best = MaxMetric()
         self.test_acc_best = MaxMetric()
 
     def forward(self, batch):
@@ -95,8 +97,11 @@ class OpenPointsModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def training_epoch_end(self, outputs: List[Any]):
-        # `outputs` is a list of dicts returned from `training_step()`
-        pass
+        acc = self.train_acc.compute()  # get current val acc
+        self.train_acc_best(acc)  # update best so far val acc
+        # log `val_acc_best` as a value through `.compute()` method, instead of as a metric object
+        # otherwise metric would be reset by lightning after each epoch
+        self.log("train/acc_best", self.train_acc_best.compute(), prog_bar=True)
 
     def validation_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
@@ -128,7 +133,11 @@ class OpenPointsModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def test_epoch_end(self, outputs: List[Any]):
-        pass
+        acc = self.test_acc.compute()  # get current val acc
+        self.test_acc_best(acc)  # update best so far val acc
+        # log `val_acc_best` as a value through `.compute()` method, instead of as a metric object
+        # otherwise metric would be reset by lightning after each epoch
+        self.log("test/acc_best", self.test_acc_best.compute(), prog_bar=True)
 
     def configure_optimizers(self):
         """Choose what optimizers and learning-rate schedulers to use in your optimization.
