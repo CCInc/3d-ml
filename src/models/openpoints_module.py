@@ -8,6 +8,9 @@ from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
 from openpoints.utils import EasyConfig
 from openpoints.models import build_model_from_cfg
+from src.utils import pylogger
+
+log = pylogger.get_pylogger(__name__)
 
 class OpenPointsModule(LightningModule):
     """Example of LightningModule for MNIST classification.
@@ -28,7 +31,7 @@ class OpenPointsModule(LightningModule):
         self,
         net: omegaconf.DictConfig,
         optimizer: torch.optim.Optimizer,
-        scheduler: torch.optim.lr_scheduler,
+        lr_scheduler: dict,
     ):
         super().__init__()
 
@@ -54,7 +57,7 @@ class OpenPointsModule(LightningModule):
         self.test_loss = MeanMetric()
 
         # for tracking best so far validation accuracy
-        self.val_acc_best = MaxMetric()
+        self.test_acc_best = MaxMetric()
 
     def forward(self, batch):
         return self.net(batch)
@@ -62,7 +65,7 @@ class OpenPointsModule(LightningModule):
     def on_train_start(self):
         # by default lightning executes validation step sanity checks before training starts,
         # so we need to make sure val_acc_best doesn't store accuracy from these checks
-        self.val_acc_best.reset()
+        self.test_acc_best.reset()
 
     def step(self, batch: Batch):
         pos, x, y = batch.pos, batch.x, batch.y
@@ -135,16 +138,15 @@ class OpenPointsModule(LightningModule):
             https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html#configure-optimizers
         """
         optimizer = self.hparams.optimizer(params=self.parameters())
-        if self.hparams.scheduler is not None:
-            scheduler = self.hparams.scheduler(optimizer=optimizer)
+        if self.hparams.lr_scheduler is not None and self.hparams.lr_scheduler.scheduler is not None:
+            # print(self.hparams.scheduler)
+            scheduler = self.hparams.lr_scheduler.scheduler(optimizer=optimizer)
+            scheduler_config = omegaconf.OmegaConf.to_container(self.hparams.lr_scheduler.config)
+            scheduler_config["scheduler"] = scheduler
+            log.info(f"Using LR Scheduler {type(scheduler)}")
             return {
                 "optimizer": optimizer,
-                "lr_scheduler": {
-                    "scheduler": scheduler,
-                    "monitor": "val/loss",
-                    "interval": "epoch",
-                    "frequency": 1,
-                },
+                "lr_scheduler": scheduler_config,
             }
         return {"optimizer": optimizer}
 

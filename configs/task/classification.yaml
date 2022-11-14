@@ -1,0 +1,4 @@
+name: classification
+
+monitor_metric: acc
+monitor_metric_mode: max
