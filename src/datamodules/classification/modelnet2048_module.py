@@ -79,6 +79,7 @@ class ModelNet2048DataModule(LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(
+            collate_fn=SimpleBatch.from_data_list,
             dataset=self.data_test,
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.num_workers,
