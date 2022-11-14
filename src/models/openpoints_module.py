@@ -13,17 +13,8 @@ from src.utils import pylogger
 log = pylogger.get_pylogger(__name__)
 
 class OpenPointsModule(LightningModule):
-    """Example of LightningModule for MNIST classification.
-
-    A LightningModule organizes your PyTorch code into 6 sections:
-        - Computations (init)
-        - Train loop (training_step)
-        - Validation loop (validation_step)
-        - Test loop (test_step)
-        - Prediction Loop (predict_step)
-        - Optimizers and LR Schedulers (configure_optimizers)
-
-    Docs:
+    """
+    LightningModule Docs:
         https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html
     """
 
@@ -31,7 +22,7 @@ class OpenPointsModule(LightningModule):
         self,
         net: omegaconf.DictConfig,
         optimizer: torch.optim.Optimizer,
-        lr_scheduler: dict,
+        lr_scheduler: dict, # todo: make this into a dataclass
     ):
         super().__init__()
 
@@ -97,9 +88,9 @@ class OpenPointsModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def training_epoch_end(self, outputs: List[Any]):
-        acc = self.train_acc.compute()  # get current val acc
-        self.train_acc_best(acc)  # update best so far val acc
-        # log `val_acc_best` as a value through `.compute()` method, instead of as a metric object
+        acc = self.train_acc.compute()  # get current test acc
+        self.train_acc_best(acc)  # update best so far test acc
+        # log `test_acc_best` as a value through `.compute()` method, instead of as a metric object
         # otherwise metric would be reset by lightning after each epoch
         self.log("train/acc_best", self.train_acc_best.compute(), prog_bar=True)
 
@@ -133,9 +124,9 @@ class OpenPointsModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def test_epoch_end(self, outputs: List[Any]):
-        acc = self.test_acc.compute()  # get current val acc
-        self.test_acc_best(acc)  # update best so far val acc
-        # log `val_acc_best` as a value through `.compute()` method, instead of as a metric object
+        acc = self.test_acc.compute()  # get current test acc
+        self.test_acc_best(acc)  # update best so far test acc
+        # log `test_acc_best` as a value through `.compute()` method, instead of as a metric object
         # otherwise metric would be reset by lightning after each epoch
         self.log("test/acc_best", self.test_acc_best.compute(), prog_bar=True)
 
