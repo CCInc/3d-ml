@@ -1,13 +1,15 @@
 from typing import Any, List
 
-import torch
-from torch_geometric.data import Batch
 import omegaconf
+import torch
 from pytorch_lightning import LightningModule
+from torch_geometric.data import Batch
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
-from openpoints.utils import EasyConfig
+
 from openpoints.models import build_model_from_cfg
+from openpoints.utils import EasyConfig
+
 
 class OpenPointsModule(LightningModule):
     """Example of LightningModule for MNIST classification.

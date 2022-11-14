@@ -1,26 +1,27 @@
 if __name__ == "__main__":
     import pyrootutils
+
     root = pyrootutils.setup_root(__file__, pythonpath=True)
 
 import glob
 import os
 from typing import Any, Dict, Optional, Tuple
-from src.datamodules.classification.components.modelnet2048 import ModelNet2048Dataset
-from src.datamodules.components.download import download_and_extract_archive
 
 import h5py
 import numpy as np
-from src.utils.batch import SimpleBatch
-
 import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
+from src.datamodules.classification.components.modelnet2048 import ModelNet2048Dataset
+from src.datamodules.components.download import download_and_extract_archive
+from src.utils.batch import SimpleBatch
+
 
 class ModelNet2048DataModule(LightningDataModule):
-    dataset_md5 = 'c9ab8e6dfb16f67afdab25e155c79e59'
-    dataset_url = f'https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip'
+    dataset_md5 = "c9ab8e6dfb16f67afdab25e155c79e59"
+    dataset_url = f"https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip"
 
     def __init__(
         self,
@@ -97,6 +98,7 @@ class ModelNet2048DataModule(LightningDataModule):
     def load_state_dict(self, state_dict: Dict[str, Any]):
         """Things to do when loading checkpoint."""
         pass
+
 
 if __name__ == "__main__":
     import hydra
