@@ -52,4 +52,4 @@ ckpt_path: null
 seed: null
 
 # make sure this is the correct name of some metric logged in lightning module!
-optimized_metric: "val/acc_best"
+optimized_metric: ${task.optimized_metric}
