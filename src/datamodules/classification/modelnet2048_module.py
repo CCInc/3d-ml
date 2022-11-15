@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional, Tuple
 
 import h5py
 import numpy as np
+from src.datamodules.common import DataModuleTransforms
 import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
@@ -29,17 +30,13 @@ class ModelNet2048DataModule(LightningDataModule):
         batch_size: int = 64,
         num_workers: int = 0,
         pin_memory: bool = False,
+        transforms: DataModuleTransforms =DataModuleTransforms(),
     ):
         super().__init__()
 
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
         self.save_hyperparameters(logger=False)
-
-        # data transformations
-        self.transforms = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
-        )
 
         self.data_train: Optional[ModelNet2048Dataset] = None
         self.data_test: Optional[ModelNet2048Dataset] = None
@@ -64,8 +61,8 @@ class ModelNet2048DataModule(LightningDataModule):
         """
         # load and split datasets only if not loaded already
         if not self.data_train and not self.data_test:
-            self.data_train = ModelNet2048Dataset(self.hparams.data_dir, "train")
-            self.data_test = ModelNet2048Dataset(self.hparams.data_dir, "test")
+            self.data_train = ModelNet2048Dataset(self.hparams.data_dir, "train", self.hparams.transforms.train)
+            self.data_test = ModelNet2048Dataset(self.hparams.data_dir, "test", self.hparams.transforms.test)
 
     def train_dataloader(self):
         return DataLoader(
