@@ -17,13 +17,14 @@ class OpenPointsModule(BaseClassificationModule):
         self,
         net: omegaconf.DictConfig,
         optimizer: torch.optim.Optimizer,
+        criterion: torch.nn.Module,
         lr_scheduler: dict,  # todo: make this into a dataclass
     ):
-        super().__init__(optimizer, lr_scheduler)
+        super().__init__(optimizer, criterion, lr_scheduler)
 
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
-        self.save_hyperparameters(logger=False, ignore=["net"])
+        self.save_hyperparameters(logger=False, ignore=["net", "criterion"])
 
         cfg = EasyConfig()
         cfg.update(omegaconf.OmegaConf.to_container(net, resolve=True))

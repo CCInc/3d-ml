@@ -21,12 +21,13 @@ class BaseClassificationModule(BaseModule):
     def __init__(
         self,
         optimizer: torch.optim.Optimizer,
+        criterion: torch.nn.Module,
         lr_scheduler: dict,  # todo: make this into a dataclass
     ):
         super().__init__(optimizer, lr_scheduler)
 
         # loss function
-        self.criterion = torch.nn.CrossEntropyLoss()
+        self.criterion = criterion
 
         # metric objects for calculating and averaging accuracy across batches
         self.train_acc = Accuracy()
