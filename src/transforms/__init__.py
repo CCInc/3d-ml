@@ -1,12 +1,14 @@
 from typing import Any, Optional
+
+from torch_geometric.transforms import BaseTransform, FixedPoints
+
 from src.transforms.augment import RandomScaleAnisotropic, RandomTranslate
-from torch_geometric.transforms import FixedPoints
-from torch_geometric.transforms import BaseTransform
 
 # This module exposes all transforms from a fixed location
 
+
 def Compose(transforms: Optional[list[Any]]) -> BaseTransform:
-    """Composes several transforms together, flattening them if they are multi-dimensional
+    """Composes several transforms together, flattening them if they are multi-dimensional.
 
     Args:
         transforms (Optional[list[Any]]): List of transforms to flatten
@@ -15,8 +17,9 @@ def Compose(transforms: Optional[list[Any]]) -> BaseTransform:
         BaseTransform: A single composed transform
     """
     # put these imports inside the function body to not pollute the module
-    from src.utils.utils import flatten_nested_lists
     import torch_geometric.transforms
+
+    from src.utils.utils import flatten_nested_lists
 
     # Flatten the arbitrarily nested transform list
     flattened_transforms = flatten_nested_lists(transforms)

@@ -1,9 +1,9 @@
 import time
 import warnings
+from collections.abc import Iterable
 from importlib.util import find_spec
 from pathlib import Path
 from typing import Any, Callable, Dict, List
-from collections.abc import Iterable
 
 import hydra
 from omegaconf import DictConfig

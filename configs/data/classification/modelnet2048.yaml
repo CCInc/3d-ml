@@ -12,7 +12,7 @@ datamodule:
   transforms: ${data.data_transforms}
 
 augment_transform:
-  # Order here matters. In PointNeXt, scaling is done before translation. 
+  # Order here matters. In PointNeXt, scaling is done before translation.
   - _target_: src.transforms.RandomScaleAnisotropic
   - _target_: src.transforms.RandomTranslate
 common_transform:

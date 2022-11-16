@@ -4,16 +4,16 @@ augment_transform:
 common_transform:
 
 data_transforms:
-  train: 
+  train:
     _target_: src.transforms.Compose
     transforms:
       - ${data.augment_transform}
       - ${data.common_transform}
-  val: 
+  val:
     _target_: src.transforms.Compose
     transforms:
       - ${data.common_transform}
-  test: 
+  test:
     _target_: src.transforms.Compose
     transforms:
       - ${data.common_transform}

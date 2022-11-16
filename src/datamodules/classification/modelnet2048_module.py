@@ -9,20 +9,19 @@ from typing import Any, Dict, Optional, Tuple
 
 import h5py
 import numpy as np
-from src.datamodules.common import DataModuleTransforms
 import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
-from torchvision.transforms import transforms
 
 from src.datamodules.classification.components.modelnet2048 import ModelNet2048Dataset
+from src.datamodules.common import DataModuleTransforms
 from src.datamodules.components.download import download_and_extract_archive
 from src.utils.batch import SimpleBatch
 
 
 class ModelNet2048DataModule(LightningDataModule):
     dataset_md5 = "c9ab8e6dfb16f67afdab25e155c79e59"
-    dataset_url = f"https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip"
+    dataset_url = "https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip"
 
     def __init__(
         self,
@@ -30,7 +29,7 @@ class ModelNet2048DataModule(LightningDataModule):
         batch_size: int = 64,
         num_workers: int = 0,
         pin_memory: bool = False,
-        transforms: DataModuleTransforms =DataModuleTransforms(),
+        transforms: DataModuleTransforms = DataModuleTransforms(),
     ):
         super().__init__()
 
@@ -61,8 +60,12 @@ class ModelNet2048DataModule(LightningDataModule):
         """
         # load and split datasets only if not loaded already
         if not self.data_train and not self.data_test:
-            self.data_train = ModelNet2048Dataset(self.hparams.data_dir, "train", self.hparams.transforms.train)
-            self.data_test = ModelNet2048Dataset(self.hparams.data_dir, "test", self.hparams.transforms.test)
+            self.data_train = ModelNet2048Dataset(
+                self.hparams.data_dir, "train", self.hparams.transforms.train
+            )
+            self.data_test = ModelNet2048Dataset(
+                self.hparams.data_dir, "test", self.hparams.transforms.test
+            )
 
     def train_dataloader(self):
         return DataLoader(
