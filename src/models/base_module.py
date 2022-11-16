@@ -3,6 +3,7 @@ import torch
 from pytorch_lightning import LightningModule
 from torch_geometric.data import Batch
 
+from src.models.common import LrScheduler
 from src.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
@@ -17,7 +18,7 @@ class BaseModule(LightningModule):
     def __init__(
         self,
         optimizer: torch.optim.Optimizer,
-        lr_scheduler: dict,  # todo: make this into a dataclass
+        lr_scheduler: LrScheduler,
     ):
         super().__init__()
 

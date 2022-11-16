@@ -7,6 +7,7 @@ from openpoints.utils import EasyConfig
 from src.models.classification.base_classification_module import (
     BaseClassificationModule,
 )
+from src.models.common import LrScheduler
 from src.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
@@ -18,7 +19,7 @@ class OpenPointsModule(BaseClassificationModule):
         net: omegaconf.DictConfig,
         optimizer: torch.optim.Optimizer,
         criterion: torch.nn.Module,
-        lr_scheduler: dict,  # todo: make this into a dataclass
+        lr_scheduler: LrScheduler,
     ):
         super().__init__(optimizer, criterion, lr_scheduler)
 

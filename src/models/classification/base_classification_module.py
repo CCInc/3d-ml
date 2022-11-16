@@ -1,12 +1,12 @@
 from typing import Any, List
 
-import omegaconf
 import torch
 from torch_geometric.data import Batch
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
 
 from src.models.base_module import BaseModule
+from src.models.common import LrScheduler
 from src.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
@@ -22,7 +22,7 @@ class BaseClassificationModule(BaseModule):
         self,
         optimizer: torch.optim.Optimizer,
         criterion: torch.nn.Module,
-        lr_scheduler: dict,  # todo: make this into a dataclass
+        lr_scheduler: LrScheduler,
     ):
         super().__init__(optimizer, lr_scheduler)
 
