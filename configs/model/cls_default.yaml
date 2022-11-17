@@ -1,0 +1,3 @@
+defaults:
+  - default
+  - /task@_group_: classification
