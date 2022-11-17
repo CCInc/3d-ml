@@ -5,10 +5,11 @@ monitor_split: train
 
 datamodule:
   _target_: src.datamodules.classification.modelnet2048_module.ModelNet2048DataModule
-  data_dir: ${paths.data_dir}/modelnet2048
-  batch_size: 64
-  num_workers: 16
-  pin_memory: False
+  config:
+    data_dir: ${paths.data_dir}/modelnet2048
+    batch_size: 64
+    num_workers: 16
+    pin_memory: False
   transforms: ${data.data_transforms}
 
 augment_transform:

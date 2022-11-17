@@ -1,20 +1,18 @@
 from typing import Any, List
 
-import omegaconf
 import torch
-from pytorch_lightning import LightningModule
 from torch_geometric.data import Batch
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
 
-from openpoints.models import build_model_from_cfg
-from openpoints.utils import EasyConfig
+from src.models.base_module import BaseModule
+from src.models.common import LrScheduler
 from src.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 
 
-class OpenPointsModule(LightningModule):
+class BaseClassificationModule(BaseModule):
     """LightningModule Docs:
 
     https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html
@@ -22,22 +20,14 @@ class OpenPointsModule(LightningModule):
 
     def __init__(
         self,
-        net: omegaconf.DictConfig,
         optimizer: torch.optim.Optimizer,
-        lr_scheduler: dict,  # todo: make this into a dataclass
+        criterion: torch.nn.Module,
+        lr_scheduler: LrScheduler,
     ):
-        super().__init__()
-
-        # this line allows to access init params with 'self.hparams' attribute
-        # also ensures init params will be stored in ckpt
-        self.save_hyperparameters(logger=False, ignore=["net"])
-
-        cfg = EasyConfig()
-        cfg.update(omegaconf.OmegaConf.to_container(net, resolve=True))
-        self.net = build_model_from_cfg(cfg)
+        super().__init__(optimizer, lr_scheduler)
 
         # loss function
-        self.criterion = torch.nn.CrossEntropyLoss()
+        self.criterion = criterion
 
         # metric objects for calculating and averaging accuracy across batches
         self.train_acc = Accuracy()
@@ -55,7 +45,7 @@ class OpenPointsModule(LightningModule):
         self.test_acc_best = MaxMetric()
 
     def forward(self, batch):
-        return self.net(batch)
+        raise NotImplementedError()
 
     def on_train_start(self):
         # by default lightning executes validation step sanity checks before training starts,
@@ -63,15 +53,7 @@ class OpenPointsModule(LightningModule):
         self.val_acc_best.reset()
 
     def step(self, batch: Batch):
-        pos, x, y = batch.pos, batch.x, batch.y
-        if x:
-            x = x.transpose(1, 2).contiguous()
-
-        # print(y.shape)
-        logits = self.forward({"pos": pos, "x": x})
-        loss = self.criterion(logits, y)
-        preds = torch.argmax(logits, dim=1)
-        return loss, preds, y
+        raise NotImplementedError()
 
     def training_step(self, batch: Batch, batch_idx: int):
         loss, preds, targets = self.step(batch)
@@ -131,36 +113,3 @@ class OpenPointsModule(LightningModule):
         # log `test_acc_best` as a value through `.compute()` method, instead of as a metric object
         # otherwise metric would be reset by lightning after each epoch
         self.log("test/acc_best", self.test_acc_best.compute(), prog_bar=True)
-
-    def configure_optimizers(self):
-        """Choose what optimizers and learning-rate schedulers to use in your optimization.
-        Normally you'd need one. But in the case of GANs or similar you might have multiple.
-
-        Examples:
-            https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html#configure-optimizers
-        """
-        optimizer = self.hparams.optimizer(params=self.parameters())
-        if (
-            self.hparams.lr_scheduler is not None
-            and self.hparams.lr_scheduler.scheduler is not None
-        ):
-            # print(self.hparams.scheduler)
-            scheduler = self.hparams.lr_scheduler.scheduler(optimizer=optimizer)
-            scheduler_config = omegaconf.OmegaConf.to_container(self.hparams.lr_scheduler.config)
-            scheduler_config["scheduler"] = scheduler
-            log.info(f"Using LR Scheduler {type(scheduler)}")
-            return {
-                "optimizer": optimizer,
-                "lr_scheduler": scheduler_config,
-            }
-        return {"optimizer": optimizer}
-
-
-if __name__ == "__main__":
-    import hydra
-    import omegaconf
-    import pyrootutils
-
-    root = pyrootutils.setup_root(__file__, pythonpath=True)
-    cfg = omegaconf.OmegaConf.load(root / "configs" / "model" / "mnist.yaml")
-    _ = hydra.utils.instantiate(cfg)

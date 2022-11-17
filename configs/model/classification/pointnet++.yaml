@@ -1,8 +1,9 @@
 defaults:
   - optimizer: adam
-  - lr_scheduler: ReduceLROnPlateau
+  - lr_scheduler: reduce_on_plateau
+  - criterion: smooth_cross_entropy
 
-_target_: src.models.openpoints_module.OpenPointsModule
+_target_: src.models.classification.openpoints_module.OpenPointsModule
 
 optimizer:
   lr: 0.001

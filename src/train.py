@@ -78,7 +78,13 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
     logger: List[LightningLoggerBase] = utils.instantiate_loggers(cfg.get("logger"))
 
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
-    trainer: Trainer = hydra.utils.instantiate(cfg.trainer, callbacks=callbacks, logger=logger)
+    trainer_params = {}
+    if datamodule.val_dataloader() is None:
+        # ref: https://github.com/Lightning-AI/lightning/issues/15703
+        trainer_params["limit_val_batches"] = 0
+    trainer: Trainer = hydra.utils.instantiate(
+        cfg.trainer, callbacks=callbacks, logger=logger, **trainer_params
+    )
 
     object_dict = {
         "cfg": cfg,
