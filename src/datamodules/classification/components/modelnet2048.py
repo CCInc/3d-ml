@@ -1,5 +1,6 @@
 import glob
 import os
+from typing import Optional
 
 import h5py
 import numpy as np
@@ -7,10 +8,13 @@ import torch
 from torch.utils.data import Dataset
 from torch_geometric.data import Data
 
+from src.transforms import BaseTransform
+
 
 class ModelNet2048Dataset(Dataset):
-    def __init__(self, data_dir, split):
+    def __init__(self, data_dir, split, transform: Optional[BaseTransform] = None):
         self.data = self.load_data(data_dir, split)
+        self.transform = transform
 
     def load_data(self, data_dir, partition):
         all_data = []
@@ -30,4 +34,8 @@ class ModelNet2048Dataset(Dataset):
 
     def __getitem__(self, idx):
         d = self.data[idx]
+
+        if self.transform:
+            d = self.transform(d)
+
         return d
