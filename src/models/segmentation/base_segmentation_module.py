@@ -3,7 +3,7 @@ from typing import Any, List
 import torch
 from torch_geometric.data import Batch
 from torchmetrics import MaxMetric, MeanMetric
-from torchmetrics.classification.accuracy import Accuracy, MulticlassJaccardIndex
+from torchmetrics.classification import MulticlassAccuracy, MulticlassJaccardIndex
 
 from src.models.base_module import BaseModule
 from src.models.common import LrScheduler
@@ -31,9 +31,9 @@ class BaseSegmentationModule(BaseModule):
         self.criterion = criterion
 
         # metric objects for calculating and averaging accuracy across batches
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
-        self.test_acc = Accuracy()
+        self.train_acc = MulticlassAccuracy(num_classes)
+        self.val_acc = MulticlassAccuracy(num_classes)
+        self.test_acc = MulticlassAccuracy(num_classes)
         self.train_iou = MulticlassJaccardIndex(num_classes)
         self.val_iou = MulticlassJaccardIndex(num_classes)
         self.test_iou = MulticlassJaccardIndex(num_classes)

@@ -1,4 +1,5 @@
 defaults:
+  - default
   - optimizer: adam
   - lr_scheduler: reduce_on_plateau
   - criterion: smooth_cross_entropy

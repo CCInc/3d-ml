@@ -35,7 +35,7 @@ class OpenPointsModule(BaseSegmentationModule):
 
     def step(self, batch: Batch):
         pos, x, y = batch.pos, batch.x, batch.y
-        if x:
+        if x is not None:
             # OpenPoints requires these channels to be flipped
             x = x.transpose(1, 2).contiguous()
 
