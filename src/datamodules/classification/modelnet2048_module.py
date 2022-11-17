@@ -12,16 +12,16 @@ import numpy as np
 import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
-from torchvision.transforms import transforms
 
 from src.datamodules.classification.components.modelnet2048 import ModelNet2048Dataset
+from src.datamodules.common import DataModuleTransforms
 from src.datamodules.components.download import download_and_extract_archive
 from src.utils.batch import SimpleBatch
 
 
 class ModelNet2048DataModule(LightningDataModule):
     dataset_md5 = "c9ab8e6dfb16f67afdab25e155c79e59"
-    dataset_url = f"https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip"
+    dataset_url = "https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip"
 
     def __init__(
         self,
@@ -29,17 +29,13 @@ class ModelNet2048DataModule(LightningDataModule):
         batch_size: int = 64,
         num_workers: int = 0,
         pin_memory: bool = False,
+        transforms: DataModuleTransforms = DataModuleTransforms(),
     ):
         super().__init__()
 
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
         self.save_hyperparameters(logger=False)
-
-        # data transformations
-        self.transforms = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
-        )
 
         self.data_train: Optional[ModelNet2048Dataset] = None
         self.data_test: Optional[ModelNet2048Dataset] = None
@@ -64,8 +60,12 @@ class ModelNet2048DataModule(LightningDataModule):
         """
         # load and split datasets only if not loaded already
         if not self.data_train and not self.data_test:
-            self.data_train = ModelNet2048Dataset(self.hparams.data_dir, "train")
-            self.data_test = ModelNet2048Dataset(self.hparams.data_dir, "test")
+            self.data_train = ModelNet2048Dataset(
+                self.hparams.data_dir, "train", self.hparams.transforms.train
+            )
+            self.data_test = ModelNet2048Dataset(
+                self.hparams.data_dir, "test", self.hparams.transforms.test
+            )
 
     def train_dataloader(self):
         return DataLoader(

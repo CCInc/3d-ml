@@ -9,3 +9,10 @@ datamodule:
   batch_size: 64
   num_workers: 16
   pin_memory: False
+  transforms: ${data.data_transforms}
+
+augment_transform:
+  # Order here matters. In PointNeXt, scaling is done before translation.
+  - _target_: src.transforms.RandomScaleAnisotropic
+  - _target_: src.transforms.RandomTranslate
+common_transform:
