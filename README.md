@@ -22,8 +22,8 @@ git clone https://github.com/CCInc/3d-ml.git && cd 3d-ml
 
 # Create a fresh conda environment
 conda activate base
-conda create -n 3dml_env -y python=3.9
-conda activate 3dml_env
+conda create -n 3dml -y python=3.9
+conda activate 3dml
 
 # For GPU support
 nvidia-smi # To make sure you have drivers and CUDA installed, also gives your CUDA version
