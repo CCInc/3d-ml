@@ -19,12 +19,27 @@ What it does
 # clone project
 git clone https://github.com/CCInc/3d-ml.git && cd 3d-ml
 
-# For CPU only
-./create_conda.sh my_env_name
+
+# Create a fresh conda environment
+conda activate base
+conda create -n 3dml_env -y python=3.9
+conda activate 3dml_env
 
 # For GPU support
 nvidia-smi # To make sure you have drivers and CUDA installed, also gives your CUDA version
-./create_conda.sh my_env_name(e.g. "3dml") cuda_version(e.g. "11.4")
+
+# Install pytorch
+# Pick a compatible combination of pytorch and cuda version from https://pytorch.org/
+conda install pytorch==1.12.1 torchvision==0.13.1 cudatoolkit=11.3 -c pytorch -y
+
+# Install pyg
+conda install pyg pytorch-scatter -c pyg -y
+
+# install other requirements
+pip install -r requirements.txt
+
+# install openpoints
+./install_openpoints.sh
 ```
 
 ## Run tests
