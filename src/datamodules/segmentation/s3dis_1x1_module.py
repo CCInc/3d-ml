@@ -4,9 +4,7 @@ from typing import Optional
 from torch_geometric.datasets import S3DIS
 
 from src.datamodules.base_dataloader import Base3dDataModule
-from src.datamodules.classification.components.modelnet2048 import ModelNet2048Dataset
 from src.datamodules.common import DataModuleConfig, DataModuleTransforms
-from src.datamodules.components.download import download_and_extract_archive
 
 
 @dataclass
@@ -27,10 +25,6 @@ class S3DIS1x1DataModule(Base3dDataModule):
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
         self.save_hyperparameters(logger=False)
-
-    @property
-    def num_classes(self):
-        return 13
 
     def prepare_data(self):
         """Download data if needed.

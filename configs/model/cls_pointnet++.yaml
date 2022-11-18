@@ -13,7 +13,6 @@ net:
   NAME: BaseCls
   encoder_args:
     NAME: PointNet2Encoder
-    in_channels: 3
     width: null
     layers: 3
     use_res: False
@@ -43,7 +42,6 @@ net:
       norm: "bn"
   cls_args:
     NAME: ClsHead
-    num_classes: 40
     mlps: [512, 256]
     norm_args:
       norm: "bn1d"

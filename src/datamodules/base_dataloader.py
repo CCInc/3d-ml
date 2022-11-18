@@ -24,6 +24,22 @@ class Base3dDataModule(LightningDataModule):
 
     @property
     def num_classes(self):
+        if self.data_train is not None:
+            return self.data_train.num_classes
+        if self.data_val is not None:
+            return self.data_val.num_classes
+        if self.data_test is not None:
+            return self.data_test.num_classes
+        raise NotImplementedError()
+
+    @property
+    def num_feats(self):
+        if self.data_train is not None:
+            return self.data_train.num_features
+        if self.data_val is not None:
+            return self.data_val.num_features
+        if self.data_test is not None:
+            return self.data_test.num_features
         raise NotImplementedError()
 
     def prepare_data(self):

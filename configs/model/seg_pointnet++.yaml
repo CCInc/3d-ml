@@ -13,7 +13,6 @@ net:
   NAME: BaseSeg
   encoder_args:
     NAME: PointNet2Encoder
-    in_channels: 6
     width: null
     strides: [4, 4, 4, 4]
     layers: 3
@@ -46,5 +45,4 @@ net:
     fp_mlps: [[128, 128, 128], [256, 128], [256, 256], [256, 256]]
   cls_args:
     NAME: SegHead
-    num_classes: 13
     in_channels: null

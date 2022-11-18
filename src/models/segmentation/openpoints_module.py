@@ -19,8 +19,9 @@ class OpenPointsModule(BaseSegmentationModule):
         criterion: torch.nn.Module,
         lr_scheduler: LrScheduler,
         num_classes: int,
+        num_feats: int,
     ):
-        super().__init__(optimizer, criterion, lr_scheduler, num_classes)
+        super().__init__(optimizer, criterion, lr_scheduler, num_classes, num_feats)
 
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
@@ -28,6 +29,8 @@ class OpenPointsModule(BaseSegmentationModule):
 
         cfg = EasyConfig()
         cfg.update(omegaconf.OmegaConf.to_container(net, resolve=True))
+        cfg["encoder_args"]["in_channels"] = num_feats
+        cfg["cls_args"]["num_classes"] = num_classes
         self.net = build_model_from_cfg(cfg)
 
     def forward(self, batch):

@@ -67,9 +67,15 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
 
     log.info(f"Instantiating datamodule <{cfg.data.datamodule._target_}>")
     datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data.datamodule)
+    # we need to setup the dataset first, so we can access the number of classes and features
+    # when building the model
+    datamodule.prepare_data()
+    datamodule.setup(stage="fit")
 
     log.info(f"Instantiating model <{cfg.model._target_}>")
-    model: LightningModule = hydra.utils.instantiate(cfg.model, num_classes=datamodule.num_classes)
+    model: LightningModule = hydra.utils.instantiate(
+        cfg.model, num_classes=datamodule.num_classes, num_feats=datamodule.num_feats
+    )
 
     log.info("Instantiating callbacks...")
     callbacks: List[Callback] = utils.instantiate_callbacks(cfg.get("callbacks"))
@@ -107,6 +113,7 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
 
     if cfg.get("test"):
         log.info("Starting testing!")
+        datamodule.setup(stage="test")
         ckpt_path = trainer.checkpoint_callback.best_model_path
         if ckpt_path == "":
             log.warning("Best ckpt not found! Using current weights for testing...")

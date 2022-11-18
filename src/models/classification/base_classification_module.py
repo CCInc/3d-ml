@@ -23,7 +23,8 @@ class BaseClassificationModule(BaseModule):
         optimizer: torch.optim.Optimizer,
         criterion: torch.nn.Module,
         lr_scheduler: LrScheduler,
-        **kwargs
+        num_classes: int,
+        num_feats: int,
     ):
         super().__init__(optimizer, lr_scheduler)
 

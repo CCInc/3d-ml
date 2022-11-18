@@ -24,6 +24,7 @@ class BaseSegmentationModule(BaseModule):
         criterion: torch.nn.Module,
         lr_scheduler: LrScheduler,
         num_classes: int,
+        num_feats: int,
     ):
         super().__init__(optimizer, lr_scheduler)
 
