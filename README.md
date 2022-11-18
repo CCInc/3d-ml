@@ -166,6 +166,9 @@ conda activate myenv
 # install pytorch according to instructions
 # https://pytorch.org/get-started/
 
+# install pytorch geometric according to instructions
+# https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html
+
 # install requirements
 pip install -r requirements.txt
 ```
