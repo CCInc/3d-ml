@@ -33,7 +33,6 @@ fi
 conda activate base
 conda create -n $1 -y python=3.9
 conda activate $1
-conda config --prepend channels conda-forge
 
 if [ $build == "CPU" ]
 then
@@ -42,16 +41,12 @@ then
 else
   export USE_CUDA=1
   export FORCE_CUDA=1
-  conda install "pytorch==1.12.0" "cudatoolkit=$2" -c pytorch -y
+  conda install "pytorch>=1.12.0" "torchvision>=0.13.0" "cudatoolkit=$2" pyg pytorch-scatter -c pytorch -c pyg -y
 fi
 
-conda install "pyg==2.1.0" "pytorch-scatter==2.0.9" -c pyg -y
-
-#conda install "torchvision==0.13.0" -y
-#
-### other requirements
+## other requirements
 #pip install -r pip-requirements.txt
-#
+
 ## Install OpenPoints stuff
 ## https://github.com/guochengqian/PointNeXt/blob/de51947c5ec64e9922801631b4af85a6ec0a6049/install.sh#L33-L54
 #cd openpoints/cpp/pointnet2_batch
