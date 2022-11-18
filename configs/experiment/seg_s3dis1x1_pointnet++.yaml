@@ -1,0 +1,8 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=seg_s3dis1x1_pointnet++
+
+defaults:
+  - override /data: seg_s3dis1x1
+  - override /model: seg_pointnet++

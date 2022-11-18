@@ -1,0 +1,8 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=cls_modelnet_pointnet++
+
+defaults:
+  - override /data: cls_modelnet2048
+  - override /model: cls_pointnet++
