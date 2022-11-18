@@ -21,6 +21,14 @@ class OpenPointsModule(BaseSegmentationModule):
         num_classes: int,
         num_feats: int,
     ):
+        if num_feats < 1:
+            # OpenPoints will automatically add position features if the feature vector is empty.
+            # ref: https://github.com/guochengqian/openpoints/blob/ed0500b304597253717ba618d0a41d5286e48792/models/backbone/pointnetv2.py#L309-L312
+            log.warning(
+                "Number of input feature channels is 0. X/Y/Z coordinates will be added to the input features."
+            )
+            num_feats = 3
+
         super().__init__(optimizer, criterion, lr_scheduler, num_classes, num_feats)
 
         # this line allows to access init params with 'self.hparams' attribute

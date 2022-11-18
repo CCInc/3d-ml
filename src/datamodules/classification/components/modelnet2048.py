@@ -34,5 +34,4 @@ class ModelNet2048Dataset(Dataset):
         # Since we inherit from pytorch geometric's dataset, the transform will automatically get
         # applied
         d = self.data[idx]
-        print(d)
         return d
