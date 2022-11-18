@@ -2,46 +2,32 @@ from typing import Any, List
 
 import torch
 from torch_geometric.data import Batch
-import omegaconf
-from pytorch_lightning import LightningModule
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
-from openpoints.utils import EasyConfig
-from openpoints.models import build_model_from_cfg
 
-class OpenPointsModule(LightningModule):
-    """Example of LightningModule for MNIST classification.
+from src.models.base_module import BaseModule
+from src.models.common import LrScheduler
+from src.utils import pylogger
 
-    A LightningModule organizes your PyTorch code into 6 sections:
-        - Computations (init)
-        - Train loop (training_step)
-        - Validation loop (validation_step)
-        - Test loop (test_step)
-        - Prediction Loop (predict_step)
-        - Optimizers and LR Schedulers (configure_optimizers)
+log = pylogger.get_pylogger(__name__)
 
-    Docs:
-        https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html
+
+class BaseClassificationModule(BaseModule):
+    """LightningModule Docs:
+
+    https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html
     """
 
     def __init__(
         self,
-        net: omegaconf.DictConfig,
         optimizer: torch.optim.Optimizer,
-        scheduler: torch.optim.lr_scheduler,
+        criterion: torch.nn.Module,
+        lr_scheduler: LrScheduler,
     ):
-        super().__init__()
-
-        # this line allows to access init params with 'self.hparams' attribute
-        # also ensures init params will be stored in ckpt
-        self.save_hyperparameters(logger=False, ignore=["net"])
-
-        cfg = EasyConfig()
-        cfg.update(omegaconf.OmegaConf.to_container(net, resolve=True))
-        self.net = build_model_from_cfg(cfg)
+        super().__init__(optimizer, lr_scheduler)
 
         # loss function
-        self.criterion = torch.nn.CrossEntropyLoss()
+        self.criterion = criterion
 
         # metric objects for calculating and averaging accuracy across batches
         self.train_acc = Accuracy()
@@ -53,11 +39,13 @@ class OpenPointsModule(LightningModule):
         self.val_loss = MeanMetric()
         self.test_loss = MeanMetric()
 
-        # for tracking best so far validation accuracy
+        # tracking best metrics, for use in hyperparameter optimization
+        self.train_acc_best = MaxMetric()
         self.val_acc_best = MaxMetric()
+        self.test_acc_best = MaxMetric()
 
     def forward(self, batch):
-        return self.net(batch)
+        raise NotImplementedError()
 
     def on_train_start(self):
         # by default lightning executes validation step sanity checks before training starts,
@@ -65,15 +53,7 @@ class OpenPointsModule(LightningModule):
         self.val_acc_best.reset()
 
     def step(self, batch: Batch):
-        pos, x, y = batch.pos, batch.x, batch.y
-        if x:
-            x = x.transpose(1, 2).contiguous()
-
-        # print(y.shape)
-        logits = self.forward({"pos": pos, "x": x})
-        loss = self.criterion(logits, y)
-        preds = torch.argmax(logits, dim=1)
-        return loss, preds, y
+        raise NotImplementedError()
 
     def training_step(self, batch: Batch, batch_idx: int):
         loss, preds, targets = self.step(batch)
@@ -92,8 +72,11 @@ class OpenPointsModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def training_epoch_end(self, outputs: List[Any]):
-        # `outputs` is a list of dicts returned from `training_step()`
-        pass
+        acc = self.train_acc.compute()  # get current test acc
+        self.train_acc_best(acc)  # update best so far test acc
+        # log `test_acc_best` as a value through `.compute()` method, instead of as a metric object
+        # otherwise metric would be reset by lightning after each epoch
+        self.log("train/acc_best", self.train_acc_best.compute(), prog_bar=True)
 
     def validation_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
@@ -125,35 +108,8 @@ class OpenPointsModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def test_epoch_end(self, outputs: List[Any]):
-        pass
-
-    def configure_optimizers(self):
-        """Choose what optimizers and learning-rate schedulers to use in your optimization.
-        Normally you'd need one. But in the case of GANs or similar you might have multiple.
-
-        Examples:
-            https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html#configure-optimizers
-        """
-        optimizer = self.hparams.optimizer(params=self.parameters())
-        if self.hparams.scheduler is not None:
-            scheduler = self.hparams.scheduler(optimizer=optimizer)
-            return {
-                "optimizer": optimizer,
-                "lr_scheduler": {
-                    "scheduler": scheduler,
-                    "monitor": "val/loss",
-                    "interval": "epoch",
-                    "frequency": 1,
-                },
-            }
-        return {"optimizer": optimizer}
-
-
-if __name__ == "__main__":
-    import hydra
-    import omegaconf
-    import pyrootutils
-
-    root = pyrootutils.setup_root(__file__, pythonpath=True)
-    cfg = omegaconf.OmegaConf.load(root / "configs" / "model" / "mnist.yaml")
-    _ = hydra.utils.instantiate(cfg)
+        acc = self.test_acc.compute()  # get current test acc
+        self.test_acc_best(acc)  # update best so far test acc
+        # log `test_acc_best` as a value through `.compute()` method, instead of as a metric object
+        # otherwise metric would be reset by lightning after each epoch
+        self.log("test/acc_best", self.test_acc_best.compute(), prog_bar=True)

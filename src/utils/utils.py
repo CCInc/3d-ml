@@ -1,5 +1,6 @@
 import time
 import warnings
+from collections.abc import Iterable
 from importlib.util import find_spec
 from pathlib import Path
 from typing import Any, Callable, Dict, List
@@ -203,3 +204,14 @@ def close_loggers() -> None:
         if wandb.run:
             log.info("Closing wandb!")
             wandb.finish()
+
+
+def flatten_nested_lists(xs):
+    if isinstance(xs, Iterable) and not isinstance(xs, (str, bytes)):
+        for x in xs:
+            if isinstance(x, Iterable) and not isinstance(x, (str, bytes)):
+                yield from flatten_nested_lists(x)
+            else:
+                yield x
+    else:
+        yield xs
