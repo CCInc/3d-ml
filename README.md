@@ -30,6 +30,7 @@ nvidia-smi # To make sure you have drivers and CUDA installed, also gives your C
 
 # Install pytorch
 # Pick a compatible combination of pytorch and cuda version from https://pytorch.org/
+# Below is an example for CUDA 11.3
 conda install pytorch==1.12.1 torchvision==0.13.1 cudatoolkit=11.3 -c pytorch -y
 
 # Install pyg
