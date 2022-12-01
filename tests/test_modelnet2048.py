@@ -12,8 +12,7 @@ from src.datamodules.common import DataModuleConfig
 @pytest.mark.parametrize("batch_size", [32, 128])
 def test_modelnet2048(tmp_path, batch_size):
     config = DataModuleConfig(
-        data_dir=os.path.join(tmp_path, "modelnet2048"),
-        batch_size=batch_size
+        data_dir=os.path.join(tmp_path, "modelnet2048"), batch_size=batch_size
     )
 
     dm = ModelNet2048DataModule(config=config)

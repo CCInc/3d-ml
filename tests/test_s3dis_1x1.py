@@ -11,10 +11,7 @@ from src.datamodules.segmentation.s3dis_1x1_module import S3DIS1x1DataModule
 @pytest.mark.slow
 @pytest.mark.parametrize("batch_size", [32, 128])
 def test_s3dis_1x1(tmp_path, batch_size):
-    config = DataModuleConfig(
-        data_dir=os.path.join(tmp_path, "s3dis_1x1"),
-        batch_size=batch_size
-    )
+    config = DataModuleConfig(data_dir=os.path.join(tmp_path, "s3dis_1x1"), batch_size=batch_size)
 
     dm = S3DIS1x1DataModule(config=config)
     dm.prepare_data()
