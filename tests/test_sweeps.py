@@ -9,6 +9,7 @@ overrides = ["logger=[]"]
 
 @RunIf(sh=True)
 @pytest.mark.slow
+@pytest.mark.skip(reason="Sweep not implemented yet")
 def test_experiments(tmp_path):
     """Test running all available experiment configs with fast_dev_run=True."""
     command = [
@@ -23,6 +24,7 @@ def test_experiments(tmp_path):
 
 @RunIf(sh=True)
 @pytest.mark.slow
+@pytest.mark.skip(reason="Sweep not implemented yet")
 def test_hydra_sweep(tmp_path):
     """Test default hydra sweep."""
     command = [
@@ -38,6 +40,7 @@ def test_hydra_sweep(tmp_path):
 
 @RunIf(sh=True)
 @pytest.mark.slow
+@pytest.mark.skip(reason="Sweep not implemented yet")
 def test_hydra_sweep_ddp_sim(tmp_path):
     """Test default hydra sweep with ddp sim."""
     command = [
@@ -56,6 +59,7 @@ def test_hydra_sweep_ddp_sim(tmp_path):
 
 @RunIf(sh=True)
 @pytest.mark.slow
+@pytest.mark.skip(reason="Sweep not implemented yet")
 def test_optuna_sweep(tmp_path):
     """Test optuna sweep."""
     command = [
@@ -72,6 +76,7 @@ def test_optuna_sweep(tmp_path):
 
 @RunIf(wandb=True, sh=True)
 @pytest.mark.slow
+@pytest.mark.skip(reason="Sweep not implemented yet")
 def test_optuna_sweep_ddp_sim_wandb(tmp_path):
     """Test optuna sweep with wandb and ddp sim."""
     command = [
