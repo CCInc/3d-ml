@@ -11,9 +11,9 @@
 
 ## Description
 
-What it does
+A versatile toolbox for 3D machine learning based on Pytorch Lightning and Hydra.
 
-## Installation
+## 💻 Installation
 
 ```bash
 # clone project
@@ -43,18 +43,12 @@ pip install -r requirements.txt
 ./install_openpoints.sh
 ```
 
-## Run tests
+## 🚀 Quickstart
 
-## Run a simple training
-
-Train model with default configuration
+Train with specific model, and dataset
 
 ```bash
-# train on CPU
-python src/train.py trainer=cpu task=classification model=cls_pointnet++ data=cls_modelnet2048
-
-# train on GPU
-python src/train.py trainer=gpu task=classification model=cls_pointnet++ data=cls_modelnet2048
+python src/train.py model=cls_pointnet++ data=cls_modelnet2048
 ```
 
 Train model with chosen experiment configuration from [configs/experiment/](configs/experiment/)
