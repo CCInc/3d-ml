@@ -9,9 +9,7 @@
 
 </div>
 
-## Description
-
-A versatile toolbox for 3D machine learning based on Pytorch Lightning and Hydra.
+**A versatile toolbox for 3D machine learning based on Pytorch Lightning and Hydra.**
 
 ## 💻 Installation
 
