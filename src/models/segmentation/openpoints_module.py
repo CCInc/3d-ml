@@ -4,16 +4,14 @@ from torch_geometric.data import Batch
 
 from openpoints.models import build_model_from_cfg
 from openpoints.utils import EasyConfig
-from src.models.classification.base_classification_module import (
-    BaseClassificationModule,
-)
 from src.models.common import LrScheduler
+from src.models.segmentation.base_segmentation_module import BaseSegmentationModule
 from src.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 
 
-class OpenPointsModule(BaseClassificationModule):
+class OpenPointsModule(BaseSegmentationModule):
     def __init__(
         self,
         net: omegaconf.DictConfig,
@@ -48,7 +46,7 @@ class OpenPointsModule(BaseClassificationModule):
 
     def step(self, batch: Batch):
         pos, x, y = batch.pos, batch.x, batch.y
-        if x:
+        if x is not None:
             # OpenPoints requires these channels to be flipped
             x = x.transpose(1, 2).contiguous()
 

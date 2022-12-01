@@ -1,0 +1,21 @@
+defaults:
+  - default
+
+monitor_split: train
+
+datamodule:
+  _target_: src.datamodules.segmentation.s3dis_1x1_module.S3DIS1x1DataModule
+  config:
+    data_dir: ${paths.data_dir}/s3dis_1x1
+    batch_size: 128
+    num_workers: 64
+    pin_memory: False
+  transforms: ${data.data_transforms}
+  dataset_config:
+    test_area: 6
+
+augment_transform:
+  # Order here matters. In PointNeXt, scaling is done before translation.
+  # - _target_: src.transforms.RandomScaleAnisotropic
+  # - _target_: src.transforms.RandomTranslate
+common_transform:
