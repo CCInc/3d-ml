@@ -8,7 +8,7 @@ from omegaconf import DictConfig, open_dict
 @pytest.fixture(scope="package")
 def cfg_train_global() -> DictConfig:
     with initialize(version_base="1.2", config_path="../configs"):
-        cfg = compose(config_name="train.yaml", return_hydra_config=True, overrides=[])
+        cfg = compose(config_name="train.yaml", return_hydra_config=True, overrides=["model=cls_pointnet++", "data=cls_modelnet2048"])
 
         # set defaults for all tests
         with open_dict(cfg):
@@ -17,10 +17,10 @@ def cfg_train_global() -> DictConfig:
             cfg.trainer.limit_train_batches = 0.01
             cfg.trainer.limit_val_batches = 0.1
             cfg.trainer.limit_test_batches = 0.1
-            cfg.trainer.accelerator = "cpu"
+            cfg.trainer.accelerator = "gpu"
             cfg.trainer.devices = 1
-            cfg.datamodule.num_workers = 0
-            cfg.datamodule.pin_memory = False
+            cfg.data.datamodule.config.num_workers = 0
+            cfg.data.datamodule.config.pin_memory = False
             cfg.extras.print_config = False
             cfg.extras.enforce_tags = False
             cfg.logger = None
