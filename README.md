@@ -23,8 +23,8 @@ conda activate base
 conda create -n 3dml -y python=3.9
 conda activate 3dml
 
-# For GPU support
-nvidia-smi # To make sure you have drivers and CUDA installed, also gives your CUDA version
+# For GPU support see https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html for CUDA toolkit installation instructions
+nvcc --version # To make sure you have the CUDA toolkit installed. Your PyTorch CUDA version must match your nvcc version.
 
 # Install pytorch
 # Pick a compatible combination of pytorch and cuda version from https://pytorch.org/
@@ -388,6 +388,20 @@ Before making an issue, please verify that:
 - Your python dependencies are updated to recent versions.
 
 Suggestions for improvements are always welcome!
+
+<br>
+
+**Experiment design**
+
+_Say you want to execute many runs to plot how accuracy changes in respect to batch size._
+
+1. Execute the runs with some config parameter that allows you to identify them easily, like tags:
+
+   ```bash
+   python train.py -m logger=csv datamodule.batch_size=16,32,64,128 tags=["batch_size_exp"]
+   ```
+
+2. Write a script or notebook that searches over the `logs/` folder and retrieves csv logs from runs containing given tags in config. Plot the results.
 
 <br>
 
