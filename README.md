@@ -51,16 +51,16 @@ Train model with default configuration
 
 ```bash
 # train on CPU
-python src/train.py trainer=cpu task=segmentation
+python src/train.py trainer=cpu task=classification model=cls_pointnet++ data=cls_modelnet2048
 
 # train on GPU
-python src/train.py trainer=gpu task=segmentation
+python src/train.py trainer=gpu task=classification model=cls_pointnet++ data=cls_modelnet2048
 ```
 
 Train model with chosen experiment configuration from [configs/experiment/](configs/experiment/)
 
 ```bash
-python src/train.py experiment=experiment_name.yaml
+python src/train.py experiment=cls_modelnet_pointnet++
 ```
 
 You can override any parameter from command line like this
