@@ -1,0 +1,6 @@
+name: segmentation
+
+monitor_metric: iou
+monitor_metric_mode: max
+monitor_split: ${data.monitor_split}
+optimized_metric: ${task.monitor_split}/${task.monitor_metric}_best

@@ -3,18 +3,16 @@ import os
 from typing import Optional
 
 import h5py
-import numpy as np
 import torch
-from torch.utils.data import Dataset
-from torch_geometric.data import Data
+from torch_geometric.data import Data, Dataset
 
 from src.transforms import BaseTransform
 
 
 class ModelNet2048Dataset(Dataset):
     def __init__(self, data_dir, split, transform: Optional[BaseTransform] = None):
+        super().__init__(transform=transform)
         self.data = self.load_data(data_dir, split)
-        self.transform = transform
 
     def load_data(self, data_dir, partition):
         all_data = []
@@ -33,9 +31,7 @@ class ModelNet2048Dataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
+        # Since we inherit from pytorch geometric's dataset, the transform will automatically get
+        # applied
         d = self.data[idx]
-
-        if self.transform:
-            d = self.transform(d)
-
         return d
