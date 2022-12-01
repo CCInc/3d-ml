@@ -391,6 +391,60 @@ Suggestions for improvements are always welcome!
 
 <br>
 
+## Experiment Config
+
+Location: [configs/experiment](configs/experiment)<br>
+Experiment configs allow you to overwrite parameters from main config.<br>
+For example, you can use them to version control best hyperparameters for each combination of model and dataset.
+
+<details>
+<summary><b>Show example experiment config</b></summary>
+
+```yaml
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /datamodule: mnist.yaml
+  - override /model: mnist.yaml
+  - override /callbacks: default.yaml
+  - override /trainer: default.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["mnist", "simple_dense_net"]
+
+seed: 12345
+
+trainer:
+  min_epochs: 10
+  max_epochs: 10
+  gradient_clip_val: 0.5
+
+model:
+  optimizer:
+    lr: 0.002
+  net:
+    lin1_size: 128
+    lin2_size: 256
+    lin3_size: 64
+
+datamodule:
+  batch_size: 64
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "mnist"
+```
+
+</details>
+
+<br>
+
 **Experiment design**
 
 _Say you want to execute many runs to plot how accuracy changes in respect to batch size._
