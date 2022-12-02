@@ -1,7 +1,6 @@
 import hydra
-import pytest
 from hydra.core.hydra_config import HydraConfig
-from omegaconf import DictConfig
+from omegaconf import DictConfig, open_dict
 
 
 def test_train_config(cfg_train: DictConfig):
@@ -11,6 +10,9 @@ def test_train_config(cfg_train: DictConfig):
     assert cfg_train.trainer
 
     HydraConfig().set_config(cfg_train)
+
+    with open_dict(cfg_train):
+        cfg_train.trainer.accelerator = "cpu"
 
     datamodule = hydra.utils.instantiate(cfg_train.data.datamodule)
     datamodule.prepare_data()
@@ -28,6 +30,9 @@ def test_eval_config(cfg_eval: DictConfig):
     assert cfg_eval.trainer
 
     HydraConfig().set_config(cfg_eval)
+
+    with open_dict(cfg_eval):
+        cfg_eval.trainer.accelerator = "cpu"
 
     datamodule = hydra.utils.instantiate(cfg_eval.data.datamodule)
     datamodule.prepare_data()
