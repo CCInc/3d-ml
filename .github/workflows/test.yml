@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest"]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10"]
 
     timeout-minutes: 10
 
@@ -34,6 +34,7 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
           pip install sh
+          bash install_openpoints.sh
 
       - name: List dependencies
         run: |
@@ -99,6 +100,7 @@ jobs:
           pip install pytest
           pip install pytest-cov[toml]
           pip install sh
+          bash install_openpoints.sh
 
       - name: Run tests and collect coverage
         run: pytest --cov src # NEEDS TO BE UPDATED WHEN CHANGING THE NAME OF "src" FOLDER
