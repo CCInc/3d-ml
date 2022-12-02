@@ -1,9 +1,9 @@
 import omegaconf
 import torch
-from openpoints.models import build_model_from_cfg
-from openpoints.utils import EasyConfig
 from torch_geometric.data import Batch
 
+from openpoints.models import build_model_from_cfg
+from openpoints.utils import EasyConfig
 from src.models.classification.base_classification_module import (
     BaseClassificationModule,
 )

@@ -8,15 +8,31 @@ from src.eval import evaluate
 from src.train import train
 from tests.helpers.run_if import RunIf
 
+test_experiments = [
+    (
+        ["experiment=cls_modelnet_pointnet++"],
+        ["model=cls_pointnet++", "data=cls_modelnet2048", "ckpt_path=."],
+        1,
+    ),
+    (
+        ["experiment=seg_s3dis1x1_pointnet++"],
+        ["model=seg_pointnet++", "data=seg_s3dis1x1", "ckpt_path=."],
+        2,
+    ),
+]
+
 
 @pytest.mark.slow
 @RunIf(openpoints=True, min_gpus=1)
-def test_train_eval(tmp_path, cfg_train, cfg_eval):
+@pytest.mark.parametrize(
+    "cfg_train, cfg_eval, max_epochs", test_experiments, indirect=["cfg_train", "cfg_eval"]
+)
+def test_eval(tmp_path, cfg_train, cfg_eval, max_epochs):
     """Train for 1 epoch with `train.py` and evaluate with `eval.py`"""
     assert str(tmp_path) == cfg_train.paths.output_dir == cfg_eval.paths.output_dir
 
     with open_dict(cfg_train):
-        cfg_train.trainer.max_epochs = 1
+        cfg_train.trainer.max_epochs = max_epochs
         cfg_train.test = True
 
     HydraConfig().set_config(cfg_train)
