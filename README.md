@@ -427,6 +427,14 @@ Before making an issue, please verify that:
 
 Suggestions for improvements are always welcome!
 
+Before contributing, make sure you set up [pre-commit](https://pre-commit.com/):
+
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run -a
+```
+
 ## Experiment Config
 
 Location: [configs/experiment](configs/experiment)<br>
