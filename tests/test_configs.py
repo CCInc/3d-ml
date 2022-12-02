@@ -12,12 +12,15 @@ def test_train_config(cfg_train: DictConfig):
 
     HydraConfig().set_config(cfg_train)
 
-    hydra.utils.instantiate(cfg_train.data.datamodule)
-    # hydra.utils.instantiate(cfg_train.model)
+    datamodule = hydra.utils.instantiate(cfg_train.data.datamodule)
+    datamodule.prepare_data()
+    datamodule.setup(stage="fit")
+    hydra.utils.instantiate(
+        cfg_train.model, num_classes=datamodule.num_classes, num_feats=datamodule.num_feats
+    )
     hydra.utils.instantiate(cfg_train.trainer)
 
 
-@pytest.mark.skip(reason="Eval not implemented yet")
 def test_eval_config(cfg_eval: DictConfig):
     assert cfg_eval
     assert cfg_eval.data.datamodule
@@ -26,6 +29,10 @@ def test_eval_config(cfg_eval: DictConfig):
 
     HydraConfig().set_config(cfg_eval)
 
-    hydra.utils.instantiate(cfg_eval.data.datamodule)
-    # hydra.utils.instantiate(cfg_eval.model)
+    datamodule = hydra.utils.instantiate(cfg_eval.data.datamodule)
+    datamodule.prepare_data()
+    datamodule.setup(stage="fit")
+    hydra.utils.instantiate(
+        cfg_eval.model, num_classes=datamodule.num_classes, num_feats=datamodule.num_feats
+    )
     hydra.utils.instantiate(cfg_eval.trainer)

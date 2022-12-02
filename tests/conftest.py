@@ -35,17 +35,21 @@ def cfg_train_global() -> DictConfig:
 @pytest.fixture(scope="package")
 def cfg_eval_global() -> DictConfig:
     with initialize(version_base="1.2", config_path="../configs"):
-        cfg = compose(config_name="eval.yaml", return_hydra_config=True, overrides=["ckpt_path=."])
+        cfg = compose(
+            config_name="eval.yaml",
+            return_hydra_config=True,
+            overrides=["model=cls_pointnet++", "data=cls_modelnet2048", "ckpt_path=."],
+        )
 
         # set defaults for all tests
         with open_dict(cfg):
             cfg.paths.root_dir = str(pyrootutils.find_root())
             cfg.trainer.max_epochs = 1
             cfg.trainer.limit_test_batches = 0.1
-            cfg.trainer.accelerator = "cpu"
+            cfg.trainer.accelerator = "gpu"
             cfg.trainer.devices = 1
-            cfg.datamodule.num_workers = 0
-            cfg.datamodule.pin_memory = False
+            cfg.data.datamodule.config.num_workers = 0
+            cfg.data.datamodule.config.pin_memory = False
             cfg.extras.print_config = False
             cfg.extras.enforce_tags = False
             cfg.logger = None
