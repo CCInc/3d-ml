@@ -17,7 +17,7 @@ Please see the [Project Guidelines](#project-guidelines) section before diving i
 
 ```bash
 # clone project
-git clone https://github.com/CCInc/3d-ml.git && cd 3d-ml
+git clone https://github.com/CCInc/3d-ml.git --recursive && cd 3d-ml
 
 
 # Create a fresh conda environment
