@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from torch_geometric.transforms import BaseTransform, FixedPoints
 
@@ -7,11 +7,11 @@ from src.transforms.augment import RandomScaleAnisotropic, RandomTranslate
 # This module exposes all transforms from a fixed location
 
 
-def Compose(transforms: Optional[list[Any]]) -> BaseTransform:
+def Compose(transforms: Optional[List[Any]]) -> BaseTransform:
     """Composes several transforms together, flattening them if they are multi-dimensional.
 
     Args:
-        transforms (Optional[list[Any]]): List of transforms to flatten
+        transforms (Optional[List[Any]]): List of transforms to flatten
 
     Returns:
         BaseTransform: A single composed transform
