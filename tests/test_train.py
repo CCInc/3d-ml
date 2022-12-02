@@ -7,8 +7,11 @@ from omegaconf import open_dict
 from src.train import train
 from tests.helpers.run_if import RunIf
 
+test_experiments = [["experiment=cls_modelnet_pointnet++"], ["experiment=seg_s3dis1x1_pointnet++"]]
+
 
 @RunIf(openpoints=True, min_gpus=1)
+@pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
 def test_train_fast_dev_run_gpu(cfg_train):
     """Run for 1 train, val and test step on GPU."""
     HydraConfig().set_config(cfg_train)
@@ -19,6 +22,7 @@ def test_train_fast_dev_run_gpu(cfg_train):
 
 @RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
+@pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
 def test_train_epoch_gpu_amp(cfg_train):
     """Train 1 epoch on GPU with mixed-precision."""
     HydraConfig().set_config(cfg_train)
@@ -30,6 +34,7 @@ def test_train_epoch_gpu_amp(cfg_train):
 
 @RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
+@pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
 def test_train_epoch_double_val_loop(cfg_train):
     """Train 1 epoch with validation loop twice per epoch."""
     HydraConfig().set_config(cfg_train)
@@ -41,6 +46,7 @@ def test_train_epoch_double_val_loop(cfg_train):
 
 @RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
+@pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
 def test_train_resume(tmp_path, cfg_train):
     """Run 1 epoch, finish, and resume for another epoch."""
     with open_dict(cfg_train):
