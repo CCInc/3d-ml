@@ -13,7 +13,7 @@ def test_random_scale():
     assert scale.scale_min == 1.2
 
 
-def test_collate():
+def test_compose():
     translate = RandomTranslate(delta=[0.5, 0.5, 0.5])
     scale = RandomScaleAnisotropic(scale=[1.2, 1.5])
 
