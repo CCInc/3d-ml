@@ -36,7 +36,6 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
           pip install sh
-          bash install_openpoints.sh
 
       - name: List dependencies
         run: |
@@ -87,6 +86,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
@@ -102,7 +103,6 @@ jobs:
           pip install pytest
           pip install pytest-cov[toml]
           pip install sh
-          bash install_openpoints.sh
 
       - name: Run tests and collect coverage
         run: pytest --cov src # NEEDS TO BE UPDATED WHEN CHANGING THE NAME OF "src" FOLDER
