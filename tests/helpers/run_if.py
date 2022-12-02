@@ -18,6 +18,7 @@ from tests.helpers.package_available import (
     _IS_WINDOWS,
     _MLFLOW_AVAILABLE,
     _NEPTUNE_AVAILABLE,
+    _OPENPOINTS_AVAILABLE,
     _SH_AVAILABLE,
     _TPU_AVAILABLE,
     _WANDB_AVAILABLE,
@@ -49,6 +50,7 @@ class RunIf:
         fairscale: bool = False,
         deepspeed: bool = False,
         wandb: bool = False,
+        openpoints: bool = False,
         neptune: bool = False,
         comet: bool = False,
         mlflow: bool = False,
@@ -118,6 +120,9 @@ class RunIf:
         if wandb:
             conditions.append(not _WANDB_AVAILABLE)
             reasons.append("wandb")
+        if wandb:
+            conditions.append(not _OPENPOINTS_AVAILABLE)
+            reasons.append("openpoints")
 
         if neptune:
             conditions.append(not _NEPTUNE_AVAILABLE)

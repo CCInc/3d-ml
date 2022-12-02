@@ -8,7 +8,7 @@ from src.train import train
 from tests.helpers.run_if import RunIf
 
 
-@RunIf(min_gpus=1)
+@RunIf(openpoints=True, min_gpus=1)
 def test_train_fast_dev_run_gpu(cfg_train):
     """Run for 1 train, val and test step on GPU."""
     HydraConfig().set_config(cfg_train)
@@ -17,7 +17,7 @@ def test_train_fast_dev_run_gpu(cfg_train):
     train(cfg_train)
 
 
-@RunIf(min_gpus=1)
+@RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
 def test_train_epoch_gpu_amp(cfg_train):
     """Train 1 epoch on GPU with mixed-precision."""
@@ -28,7 +28,7 @@ def test_train_epoch_gpu_amp(cfg_train):
     train(cfg_train)
 
 
-@RunIf(min_gpus=1)
+@RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
 def test_train_epoch_double_val_loop(cfg_train):
     """Train 1 epoch with validation loop twice per epoch."""
@@ -39,7 +39,7 @@ def test_train_epoch_double_val_loop(cfg_train):
     train(cfg_train)
 
 
-@RunIf(min_gpus=1)
+@RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
 def test_train_resume(tmp_path, cfg_train):
     """Run 1 epoch, finish, and resume for another epoch."""

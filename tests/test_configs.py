@@ -5,7 +5,7 @@ from omegaconf import DictConfig, open_dict
 from tests.helpers.run_if import RunIf
 
 
-@RunIf(min_gpus=1)
+@RunIf(openpoints=True)
 def test_train_config(cfg_train: DictConfig):
     assert cfg_train
     assert cfg_train.data.datamodule
@@ -26,7 +26,7 @@ def test_train_config(cfg_train: DictConfig):
     hydra.utils.instantiate(cfg_train.trainer)
 
 
-@RunIf(min_gpus=1)
+@RunIf(openpoints=True)
 def test_eval_config(cfg_eval: DictConfig):
     assert cfg_eval
     assert cfg_eval.data.datamodule

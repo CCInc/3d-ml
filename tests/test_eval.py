@@ -6,9 +6,11 @@ from omegaconf import open_dict
 
 from src.eval import evaluate
 from src.train import train
+from tests.helpers.run_if import RunIf
 
 
 @pytest.mark.slow
+@RunIf(openpoints=True, min_gpus=1)
 def test_train_eval(tmp_path, cfg_train, cfg_eval):
     """Train for 1 epoch with `train.py` and evaluate with `eval.py`"""
     assert str(tmp_path) == cfg_train.paths.output_dir == cfg_eval.paths.output_dir
