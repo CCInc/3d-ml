@@ -1,14 +1,13 @@
 import platform
 
-import pkg_resources
 from pytorch_lightning.utilities.xla_device import XLADeviceUtils
 
 
 def _package_available(package_name: str) -> bool:
     """Check if a package is available in your environment."""
     try:
-        return pkg_resources.require(package_name) is not None
-    except pkg_resources.DistributionNotFound:
+        return __import__(package_name) is not None
+    except ModuleNotFoundError:
         return False
 
 
