@@ -11,7 +11,7 @@
 
 **A versatile framework for 3D machine learning built on Pytorch Lightning and Hydra.**
 
-Please see the [Project Guidelines](#project-guidelines) and [Contributions](#%E2%9D%A4%EF%B8%8F-contributions) sections before diving into the code!
+Please see the [Project Guidelines](#project-guidelines) section before diving into the code!
 
 ## 💻 Installation
 
