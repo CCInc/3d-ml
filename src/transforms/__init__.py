@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 
-from torch_geometric.transforms import BaseTransform, FixedPoints
+from torch_geometric.transforms import BaseTransform
 
 from src.transforms.augment import RandomScaleAnisotropic, RandomTranslate
 
