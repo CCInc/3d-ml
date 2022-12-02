@@ -120,7 +120,8 @@ class RunIf:
         if wandb:
             conditions.append(not _WANDB_AVAILABLE)
             reasons.append("wandb")
-        if wandb:
+
+        if openpoints:
             conditions.append(not _OPENPOINTS_AVAILABLE)
             reasons.append("openpoints")
 
