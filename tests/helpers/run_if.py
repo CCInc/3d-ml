@@ -68,6 +68,7 @@ class RunIf:
             fairscale: if `fairscale` module is required to run the test
             deepspeed: if `deepspeed` module is required to run the test
             wandb: if `wandb` module is required to run the test
+            openpoints: if `openpoints` module is required to run the test
             neptune: if `neptune` module is required to run the test
             comet: if `comet` module is required to run the test
             mlflow: if `mlflow` module is required to run the test
