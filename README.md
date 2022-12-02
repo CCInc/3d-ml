@@ -9,7 +9,9 @@
 
 </div>
 
-**A versatile toolbox for 3D machine learning based on Pytorch Lightning and Hydra.**
+**A versatile framework for 3D machine learning built on Pytorch Lightning and Hydra.**
+
+Please see the [Project Guidelines](#project-guidelines) section before diving into the code!
 
 ## 💻 Installation
 
@@ -378,6 +380,42 @@ ValueError: Specify tags before launching a multirun!
 
 <br>
 
+## Project Guidelines
+
+This project is based on a plugin architecture and is to remain as lightweight as possible, serving merely as a connector between different downstream libraries. The main functions this framework is to serve is as follows:
+
+- Provide experiment configuration control with Hydra config
+- Provide consistent data augmentation and preprocessing steps across multiple datasets and models
+- Provide reference implementations of commonly used 3D datasets using PyL
+- Provide experiment tracking across a wide array of tools, e.g. Wandb and Tensorboard
+- Provide PyL wrappers for downstream libraries which provide model implementations and backends
+
+### Configuration
+
+Refer to the [Hydra docs](https://hydra.cc/docs/tutorials/intro/) for overall best practices when using Hydra configs.
+
+Relevant configuration parameters should be provided for every model/dataset to ensure easy reproducibility (e.g. batch sizes, learning rate, schedulers, optimizers).
+
+Configuration and code should be completely decoupled. Parameters passed to code from a Hydra config should be in the form of primitives or dataclasses, not DictConfigs or generic key/value pairs. See, for example, the usage of the `LrScheduler` dataclass to duct-type the configuration parameters in [src/models/common.py](src/models/common.py). As as result, **all code should be able to be run independently of Hydra**. Configuration files should use [hydra instantiation](https://hydra.cc/docs/advanced/instantiate_objects/overview/) whenever possible to support this goal.
+
+### Datasets
+
+Dataset preprocessing should be as minimal as possible so that the user can have maximum flexbility in how to prepare the data for their specific model or usecase. For example, rather than hardcoding data augmentations within the dataset code, data augmentations should be specified in the configuration file. Datasets should be agnostic to models, and any specific model preparation should be left to the configuration.
+
+All datasets should be implemented within `LightningDataModule`s and inherit from `Base3dDataModule`. This data module code should handle train/test/validation splits, downloading and storing the dataset, and initializing the underlying dataset classes.
+
+Datasets should inherit from `torch_geometric.data.Dataset`, which allows the trainer to grab the number of classes and the number of features directly from the dataset object.
+
+The `__getitem__` function of the dataset should return a `torch_geometric.data.Data` object, with at least the keys `pos` and `y`. For proper collation, keys must be Tensor objects or primitives. For all tasks, the key `pos` will be a floating point tensor of size `(n, 3)`. For classification tasks, the key `y` will be a single integer value. For segmentation tasks, the key `y` will be stored as a tensor of integers of size `(n)`.
+
+Features such as RGB should be stored into dedicated keys in the `Data` object. Then, these features can be added to the `x` vector dynamically by using the `AddFeatsByKey` transform.
+
+### Models
+
+Metrics should be implemented using the [TorchMetrics](https://torchmetrics.readthedocs.io/en/stable/) library whenever possible. If a metric is not available, first try to add an implementation to the TorchMetrics repo.
+
+Models should be implemented as much as possible via backend plugins, such as TorchSparse or OpenPoints. Then, construct a `LightningModule` which inherits from `BaseSegmentationModel` or `BaseClassificationModel` to interface with that backend. The backend model should be constructed in the module's initializer, and the `step` and `forward` functions should be used to transform the data into the appropriate format to pass to the backend model, apply the criterion, and return the predictions and loss.
+
 ## ❤️ Contributions
 
 Have a question? Found a bug? Missing a specific feature? Feel free to file a new issue, discussion or PR with respective title and description.
@@ -389,7 +427,13 @@ Before making an issue, please verify that:
 
 Suggestions for improvements are always welcome!
 
-<br>
+Before contributing, make sure you set up [pre-commit](https://pre-commit.com/):
+
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run -a
+```
 
 ## Experiment Config
 
