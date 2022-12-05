@@ -3,9 +3,8 @@ from torch_geometric.data import Data
 
 
 class SimpleBatch(Data):
-    r"""A classic batch object wrapper with :class:`torch_geometric.data.Data` being the
-    base class, all its methods can also be used here.
-    """
+    r"""A classic batch object wrapper with :class:`torch_geometric.data.Data` being the base
+    class, all its methods can also be used here."""
 
     def __init__(self, batch=None, **kwargs):
         super().__init__(**kwargs)
