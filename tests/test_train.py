@@ -2,7 +2,7 @@ import os
 
 import pytest
 from hydra.core.hydra_config import HydraConfig
-from omegaconf import open_dict
+from omegaconf import DictConfig, open_dict
 
 from src.train import train
 from tests.helpers.run_if import RunIf
@@ -12,7 +12,7 @@ test_experiments = [["experiment=cls_modelnet_pointnet++"], ["experiment=seg_s3d
 
 @RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
-def test_train_fast_dev_run_gpu(cfg_train):
+def test_train_fast_dev_run_gpu(cfg_train: DictConfig):
     """Run for 1 train, val and test step on GPU."""
     HydraConfig().set_config(cfg_train)
     with open_dict(cfg_train):
@@ -23,7 +23,7 @@ def test_train_fast_dev_run_gpu(cfg_train):
 @RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
 @pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
-def test_train_epoch_gpu_amp(cfg_train):
+def test_train_epoch_gpu_amp(cfg_train: DictConfig):
     """Train 1 epoch on GPU with mixed-precision."""
     HydraConfig().set_config(cfg_train)
     with open_dict(cfg_train):
@@ -35,7 +35,7 @@ def test_train_epoch_gpu_amp(cfg_train):
 @RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
 @pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
-def test_train_epoch_double_val_loop(cfg_train):
+def test_train_epoch_double_val_loop(cfg_train: DictConfig):
     """Train 1 epoch with validation loop twice per epoch."""
     HydraConfig().set_config(cfg_train)
     with open_dict(cfg_train):
@@ -47,7 +47,7 @@ def test_train_epoch_double_val_loop(cfg_train):
 @RunIf(openpoints=True, min_gpus=1)
 @pytest.mark.slow
 @pytest.mark.parametrize("cfg_train", test_experiments, indirect=["cfg_train"])
-def test_train_resume(tmp_path, cfg_train):
+def test_train_resume(tmp_path: str, cfg_train: DictConfig):
     """Run 1 epoch, finish, and resume for another epoch."""
     with open_dict(cfg_train):
         cfg_train.trainer.max_epochs = 1
