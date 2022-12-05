@@ -1,9 +1,9 @@
 import omegaconf
 import torch
-from openpoints.models import build_model_from_cfg
-from openpoints.utils import EasyConfig
 from torch_geometric.data import Batch
 
+from openpoints.models import build_model_from_cfg
+from openpoints.utils import EasyConfig
 from src.models.common import LrScheduler
 from src.models.segmentation.base_segmentation_module import BaseSegmentationModule
 from src.utils import pylogger
