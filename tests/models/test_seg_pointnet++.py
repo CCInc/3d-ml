@@ -2,8 +2,10 @@ import hydra
 import pytest
 
 from tests.helpers.helpers import count_trainable_params
+from tests.helpers.run_if import RunIf
 
 
+@RunIf(openpoints=True)
 @pytest.mark.parametrize("cfg_model", ["seg_pointnet++.yaml"], indirect=["cfg_model"])
 def test_seg_pointnetpp(cfg_model):
 
