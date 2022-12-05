@@ -8,8 +8,8 @@ from torch_geometric.data import Data
 # https://github.com/torch-points3d/torch-points3d/blob/66e8bf22b2d98adca804c753ac3f0013ff4ec731/torch_points3d/core/data_transform/transforms.py#L517-L555
 # https://github.com/guochengqian/openpoints/blob/ed0500b304597253717ba618d0a41d5286e48792/transforms/point_transformer_gpu.py#L183-L213
 class RandomScaleAnisotropic:
-    r""" Scales node positions by a randomly sampled factor ``s1, s2, s3`` within a
-    given interval, *e.g.*, resulting in the transformation matrix
+    r"""Scales node positions by a randomly sampled factor ``s1, s2, s3`` within a given interval,
+    *e.g.*, resulting in the transformation matrix.
 
     .. math::
         \left[
@@ -52,8 +52,8 @@ class RandomScaleAnisotropic:
 # Ref:
 # https://github.com/guochengqian/openpoints/blob/ed0500b304597253717ba618d0a41d5286e48792/transforms/point_transformer_gpu.py#L183-L213
 class RandomTranslate:
-    r""" Translates node positions by a randomly sampled factor ``t1, t2, t3`` within a
-    given interval.
+    r"""Translates node positions by a randomly sampled factor ``t1, t2, t3`` within a given
+    interval.
 
     Parameters
     -----------
