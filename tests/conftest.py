@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import pyrootutils
@@ -90,3 +91,21 @@ def cfg_eval_global(overrides: List[str] = None) -> DictConfig:
             cfg.logger = None
 
     return cfg
+
+
+@pytest.fixture(scope="function")
+def cfg_model(request) -> DictConfig:
+
+    with initialize(version_base="1.2", config_path="../configs"):
+        cfg = compose(
+            config_name=os.path.join("model", request.param),
+            return_hydra_config=True,
+        )
+
+    with open_dict(cfg):
+        cfg.data = {}
+        cfg.data.monitor_split = "Train"
+
+    yield cfg
+
+    GlobalHydra.instance().clear()
