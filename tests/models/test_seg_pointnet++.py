@@ -1,8 +1,8 @@
 import hydra
 import pytest
 
-from tests.helpers.helpers import count_trainable_params
 from tests.helpers.run_if import RunIf
+from tests.helpers.utils import count_trainable_params
 
 test_cases = [("seg_pointnet++.yaml", 2, 6, 963682), ("seg_pointnet++.yaml", 4, 8, 964260)]
 
@@ -16,4 +16,4 @@ def test_seg_pointnetpp(cfg_model, num_classes, num_feats, num_params):
 
     assert count_trainable_params(model) == num_params
     assert model.net.encoder.channel_list[0] == num_feats
-    assert model.net.head.head[2][0].out_channels == num_classes
+    assert model.net.head.head[-1][0].out_channels == num_classes

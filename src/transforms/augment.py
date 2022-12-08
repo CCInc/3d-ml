@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import torch
 from torch_geometric.data import Data
 
@@ -30,7 +32,7 @@ class RandomScaleAnisotropic:
         ``a <=  b``. \
     """
 
-    def __init__(self, scale=None):
+    def __init__(self, scale: Sequence = None):
         if scale is None:
             scale = [2.0 / 3, 3.0 / 2]
         assert len(scale) == 2
@@ -64,7 +66,7 @@ class RandomTranslate:
         ``[(-t1, t1), (-t2, t2), (-t3, t3)]``. \
     """
 
-    def __init__(self, delta=None):
+    def __init__(self, delta: Sequence = None):
         if delta is None:
             delta = [0.2, 0.2, 0.2]
         assert len(delta) == 3
