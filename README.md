@@ -13,7 +13,7 @@
 
 Please see the [Project Guidelines](#project-guidelines) section before diving into the code!
 
-## 💻 Installation
+## 💻 Conda Installation (recommended)
 
 ```bash
 # clone project
@@ -40,6 +40,34 @@ conda install pyg pytorch-scatter -c pyg -y
 pip install -r requirements.txt
 
 # install openpoints
+./install_openpoints.sh
+```
+
+## 💻 Pip Installation
+
+```bash
+# clone project with submodules
+git clone https://github.com/CCInc/3d-ml.git --recurse-submodules && cd 3d-ml
+
+# (optional) create virtual environment with virtualenv
+python -m virtualenv env_3d
+source env_3d/bin/activate
+
+# Install pytorch
+# Pick a compatible combination of pytorch and cuda version from https://pytorch.org/
+# Below is an example for CUDA 11.6
+pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu116
+
+# Install pytorch geo with pip
+# Below is an example for CUDA 11.6 and torch 1.13
+pip install pyg-lib torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-1.13.0+cu116.html
+pip install torch-geometric
+
+# Install additional requirements
+pip install -r requirements.txt
+
+# If using virtual environments remove the "--user" argument for the last two setup.py commands
+# in the file install_openpoints.sh. 
 ./install_openpoints.sh
 ```
 
