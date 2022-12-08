@@ -67,7 +67,7 @@ pip install torch-geometric
 pip install -r requirements.txt
 
 # If using virtual environments remove the "--user" argument for the last two setup.py commands
-# in the file install_openpoints.sh. 
+# in the file install_openpoints.sh.
 ./install_openpoints.sh
 ```
 
