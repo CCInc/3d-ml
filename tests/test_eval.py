@@ -2,14 +2,30 @@ import os
 
 import pytest
 from hydra.core.hydra_config import HydraConfig
-from omegaconf import open_dict
+from omegaconf import DictConfig, open_dict
 
 from src.eval import evaluate
 from src.train import train
+from tests.helpers.run_if import RunIf
+
+test_experiments = [
+    (
+        ["experiment=cls_modelnet_pointnet++"],
+        ["model=cls_pointnet++", "data=cls_modelnet2048", "ckpt_path=."],
+    ),
+    (
+        ["experiment=seg_s3dis1x1_pointnet++"],
+        ["model=seg_pointnet++", "data=seg_s3dis1x1", "ckpt_path=."],
+    ),
+]
 
 
 @pytest.mark.slow
-def test_train_eval(tmp_path, cfg_train, cfg_eval):
+@RunIf(openpoints=True, min_gpus=1)
+@pytest.mark.parametrize(
+    "cfg_train, cfg_eval", test_experiments, indirect=["cfg_train", "cfg_eval"]
+)
+def test_eval(tmp_path: str, cfg_train: DictConfig, cfg_eval: DictConfig):
     """Train for 1 epoch with `train.py` and evaluate with `eval.py`"""
     assert str(tmp_path) == cfg_train.paths.output_dir == cfg_eval.paths.output_dir
 
@@ -20,13 +36,10 @@ def test_train_eval(tmp_path, cfg_train, cfg_eval):
     HydraConfig().set_config(cfg_train)
     train_metric_dict, _ = train(cfg_train)
 
-    assert "last.ckpt" in os.listdir(tmp_path / "checkpoints")
+    assert "last.ckpt" in os.listdir(os.path.join(tmp_path, "checkpoints"))
 
     with open_dict(cfg_eval):
-        cfg_eval.ckpt_path = str(tmp_path / "checkpoints" / "last.ckpt")
+        cfg_eval.ckpt_path = os.path.join(tmp_path, "checkpoints/last.ckpt")
 
     HydraConfig().set_config(cfg_eval)
-    test_metric_dict, _ = evaluate(cfg_eval)
-
-    assert test_metric_dict["test/acc"] > 0.0
-    assert abs(train_metric_dict["test/acc"].item() - test_metric_dict["test/acc"].item()) < 0.001
+    evaluate(cfg_eval)

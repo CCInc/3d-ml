@@ -32,7 +32,9 @@ class RandomScaleAnisotropic:
         ``a <=  b``. \
     """
 
-    def __init__(self, scale: Sequence = [2.0 / 3, 3.0 / 2]):
+    def __init__(self, scale: Sequence = None):
+        if scale is None:
+            scale = [2.0 / 3, 3.0 / 2]
         assert len(scale) == 2
         self.scale_min, self.scale_max = scale
         assert self.scale_min <= self.scale_max
@@ -64,7 +66,9 @@ class RandomTranslate:
         ``[(-t1, t1), (-t2, t2), (-t3, t3)]``. \
     """
 
-    def __init__(self, delta: Sequence = [0.2, 0.2, 0.2]):
+    def __init__(self, delta: Sequence = None):
+        if delta is None:
+            delta = [0.2, 0.2, 0.2]
         assert len(delta) == 3
         self.delta = delta
 
