@@ -35,6 +35,7 @@ def represents_int(s):
     except ValueError:
         return False
 
+
 def download_file(url, out_file):
     out_dir = os.path.dirname(out_file)
     if not os.path.isdir(out_dir):
@@ -99,7 +100,8 @@ def download_release(release_scans, out_dir, file_types, use_v1_sens):
             failed.append(scan_id)
     print("Downloaded ScanNet " + ScanNetConfig.RELEASE_NAME + " release.")
     if len(failed):
-        log.warning("Failed downloads: {}".format(failed))
+        log.warning(f"Failed downloads: {failed}")
+
 
 def read_mesh_vertices_rgb(filename):
     """read XYZ RGB for each vertex.
@@ -118,6 +120,7 @@ def read_mesh_vertices_rgb(filename):
         vertices[:, 4] = plydata["vertex"].data["green"]
         vertices[:, 5] = plydata["vertex"].data["blue"]
     return vertices
+
 
 def read_label_mapping(filename, label_from="raw_category", label_to="nyu40id"):
     assert os.path.isfile(filename)
@@ -175,7 +178,9 @@ def export(mesh_file, agg_file, seg_file, meta_file, label_map_file, output_file
     lines = open(meta_file).readlines()
     for line in lines:
         if "axisAlignment" in line:
-            axis_align_matrix = [float(x) for x in line.rstrip().strip("axisAlignment = ").split(" ")]
+            axis_align_matrix = [
+                float(x) for x in line.rstrip().strip("axisAlignment = ").split(" ")
+            ]
             break
     axis_align_matrix = np.array(axis_align_matrix).reshape((4, 4))
     pts = np.ones((mesh_vertices.shape[0], 4))
@@ -307,34 +312,34 @@ class ScanNetConfig:
 
 
 class ScanNet(Dataset):
-    def __init__(self, 
-                 data_dir, 
-                 split, 
-                 normalize_rgb, 
-                 donotcare_class_ids = [],
-                 max_num_point=None,) -> None:
+    def __init__(
+        self,
+        data_dir,
+        split,
+        normalize_rgb,
+        donotcare_class_ids=[],
+        max_num_point=None,
+    ) -> None:
         self.data_dir = data_dir
         self.split = split
-        if split == 'test':
-            self.scan_dir = os.path.join(data_dir, 'scans_test')
+        if split == "test":
+            self.scan_dir = os.path.join(data_dir, "scans_test")
         else:
-            self.scan_dir = os.path.join(data_dir, 'scans')
+            self.scan_dir = os.path.join(data_dir, "scans")
         self.metadata_path = os.path.join(self.data_dir, "metadata")
-        self.label_map_file = os.path.join(self.metadata_path, 
-                                           "scannetv2-labels.combined.tsv")
-        split_file = os.path.join(self.metadata_path, 
-                                  "scannetv2_{}.txt".format(split))
+        self.label_map_file = os.path.join(self.metadata_path, "scannetv2-labels.combined.tsv")
+        split_file = os.path.join(self.metadata_path, f"scannetv2_{split}.txt")
         self.scan_names = self.read_scan_names(split_file)
         self.normalize_rgb = normalize_rgb
         self.donotcare_class_ids = donotcare_class_ids
         self.max_num_point = max_num_point
-        
+
     def read_scan_names(self, split_file):
         with open(split_file) as f:
             scan_names = sorted([line.rstrip() for line in f])
             f.close()
         return scan_names
-        
+
     @staticmethod
     def read_one_test_scan(scannet_dir, scan_name, normalize_rgb):
         mesh_file = os.path.join(scannet_dir, scan_name, scan_name + "_vh_clean_2.ply")
@@ -358,7 +363,9 @@ class ScanNet(Dataset):
     ):
         mesh_file = os.path.join(scannet_dir, scan_name, scan_name + "_vh_clean_2.ply")
         agg_file = os.path.join(scannet_dir, scan_name, scan_name + ".aggregation.json")
-        seg_file = os.path.join(scannet_dir, scan_name, scan_name + "_vh_clean_2.0.010000.segs.json")
+        seg_file = os.path.join(
+            scannet_dir, scan_name, scan_name + "_vh_clean_2.0.010000.segs.json"
+        )
         meta_file = os.path.join(
             scannet_dir, scan_name, scan_name + ".txt"
         )  # includes axisAlignment info for the train set scans.
@@ -392,22 +399,24 @@ class ScanNet(Dataset):
         data["instance_labels"] = torch.from_numpy(instance_labels)
 
         return Data(**data)
-    
+
     def __getitem__(self, index) -> T_co:
-        if self.split == 'test':
-            data = ScanNet.read_one_test_scan(self.scan_dir, 
-                                              self.scan_names[index],
-                                              normalize_rgb=self.normalize_rgb)
+        if self.split == "test":
+            data = ScanNet.read_one_test_scan(
+                self.scan_dir, self.scan_names[index], normalize_rgb=self.normalize_rgb
+            )
         else:
-            data = ScanNet.read_one_scan(self.scan_dir, 
-                                         self.scan_names[index],
-                                         label_map_file=self.label_map_file,
-                                         donotcare_class_ids=self.donotcare_class_ids,
-                                         max_num_point=self.max_num_point,
-                                         normalize_rgb=self.normalize_rgb
-                                         )
+            data = ScanNet.read_one_scan(
+                self.scan_dir,
+                self.scan_names[index],
+                label_map_file=self.label_map_file,
+                donotcare_class_ids=self.donotcare_class_ids,
+                max_num_point=self.max_num_point,
+                normalize_rgb=self.normalize_rgb,
+            )
         return data
-    
+
+
 class ScanNetDataModule(Base3dDataModule):
     def __init__(
         self,
@@ -448,7 +457,12 @@ class ScanNetDataModule(Base3dDataModule):
                 if file_type in self.data_config.FILETYPES_TEST:
                     file_types_test.append(file_type)
         download_label_map(self.data_dir)
-        print("WARNING: You are downloading all ScanNet " + self.data_config.RELEASE_NAME + " scans of type " + file_types[0])
+        print(
+            "WARNING: You are downloading all ScanNet "
+            + self.data_config.RELEASE_NAME
+            + " scans of type "
+            + file_types[0]
+        )
         print(
             "Note that existing scan directories will be skipped. Delete partially downloaded directories to re-download."
         )
@@ -466,23 +480,28 @@ class ScanNetDataModule(Base3dDataModule):
         if self.version == "v2":
             download_label_map(self.data_dir)
             download_release(
-                release_test_scans, out_dir_test_scans, file_types_test, 
-                use_v1_sens=True)
-    
+                release_test_scans, out_dir_test_scans, file_types_test, use_v1_sens=True
+            )
+
     def setup(self, stage: Optional[str] = None):
-        self.data_train = ScanNet(self.data_dir, 
-                                  split='train', 
-                                  normalize_rgb=self.normalize_rgb,
-                                  donotcare_class_ids=self.donotcare_class_ids,
-                                  max_num_point=self.max_num_point)
-        self.data_val = ScanNet(self.data_dir, 
-                                  split='val', 
-                                  normalize_rgb=self.normalize_rgb,
-                                  donotcare_class_ids=self.donotcare_class_ids,
-                                  max_num_point=self.max_num_point)
-        self.data_val = ScanNet(self.data_dir, 
-                                  split='test', 
-                                  normalize_rgb=self.normalize_rgb,
-                                  donotcare_class_ids=self.donotcare_class_ids,
-                                  max_num_point=self.max_num_point)
-        
+        self.data_train = ScanNet(
+            self.data_dir,
+            split="train",
+            normalize_rgb=self.normalize_rgb,
+            donotcare_class_ids=self.donotcare_class_ids,
+            max_num_point=self.max_num_point,
+        )
+        self.data_val = ScanNet(
+            self.data_dir,
+            split="val",
+            normalize_rgb=self.normalize_rgb,
+            donotcare_class_ids=self.donotcare_class_ids,
+            max_num_point=self.max_num_point,
+        )
+        self.data_val = ScanNet(
+            self.data_dir,
+            split="test",
+            normalize_rgb=self.normalize_rgb,
+            donotcare_class_ids=self.donotcare_class_ids,
+            max_num_point=self.max_num_point,
+        )
