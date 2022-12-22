@@ -1,16 +1,15 @@
+import csv
+import json
 import logging
 import os
 import tempfile
-import logging
-import torch
-import numpy as np
-import csv
-import json
-
-from urllib.request import urlopen
 from typing import Any, Dict, Optional
-from torch.utils.data import Dataset
+from urllib.request import urlopen
+
+import numpy as np
+import torch
 from plyfile import PlyData
+from torch.utils.data import Dataset
 from torch_geometric.data import Data
 
 from src.datamodules.base_dataloader import Base3dDataModule
@@ -29,7 +28,7 @@ def get_release_scans(release_file):
 
 
 def represents_int(s):
-    """ if string s represents an int. """
+    """if string s represents an int."""
     try:
         int(s)
         return True
@@ -101,9 +100,10 @@ def download_release(release_scans, out_dir, file_types, use_v1_sens):
     print("Downloaded ScanNet " + ScanNetConfig.RELEASE_NAME + " release.")
     if len(failed):
         log.warning("Failed downloads: {}".format(failed))
-        
+
 def read_mesh_vertices_rgb(filename):
     """read XYZ RGB for each vertex.
+
     Note: RGB values are in 0-255
     """
     assert os.path.isfile(filename)
@@ -166,11 +166,8 @@ def read_segmentation(filename):
 
 
 def export(mesh_file, agg_file, seg_file, meta_file, label_map_file, output_file=None):
-    """points are XYZ RGB (RGB in 0-255),
-    semantic label as nyu40 ids,
-    instance label as 1-#instance,
-    box as (cx,cy,cz,dx,dy,dz,semantic_label)
-    """
+    """points are XYZ RGB (RGB in 0-255), semantic label as nyu40 ids, instance label as
+    1-#instance, box as (cx,cy,cz,dx,dy,dz,semantic_label)"""
     label_map = read_label_mapping(label_map_file, label_from="raw_category", label_to="nyu40id")
     mesh_vertices = read_mesh_vertices_rgb(mesh_file)
 
@@ -313,7 +310,7 @@ class ScanNet(Dataset):
     def __init__(self, data_dir, split, ) -> None:
         self.data_dir = data_dir
         self.split = split
-        
+
     def read_from_metadata(self):
         metadata_path = os.path.join(self.raw_dir, "metadata")
         self.label_map_file = os.path.join(metadata_path, ScanNetConfig.LABEL_MAP_FILE)
@@ -327,7 +324,7 @@ class ScanNet(Dataset):
         for idx_split, split in enumerate(ScanNetConfig.SPLITS):
             idx_mapping = {idx: scan_name for idx, scan_name in enumerate(self.scan_names[idx_split])}
             setattr(self, "MAPPING_IDX_TO_SCAN_{}_NAMES".format(split.upper()), idx_mapping)
-        
+
     @staticmethod
     def read_one_test_scan(scannet_dir, scan_name, normalize_rgb):
         mesh_file = os.path.join(scannet_dir, scan_name, scan_name + "_vh_clean_2.ply")
@@ -390,7 +387,7 @@ class ScanNet(Dataset):
         data["instance_bboxes"] = torch.from_numpy(instance_bboxes)
 
         return Data(**data)
-    
+
 class ScanNetDataModule(Base3dDataModule):
     def __init__(
         self,
@@ -448,5 +445,5 @@ class ScanNetDataModule(Base3dDataModule):
                 release_test_scans, out_dir_test_scans, file_types_test, use_v1_sens=True
                 def setup(self, stage: Optional[str] = None):
         return super().setup(stage)
-        
+
     )
