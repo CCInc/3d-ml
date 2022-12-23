@@ -312,10 +312,10 @@ class ScanNetConfig:
 
 
 class ScanNet(Dataset):
-    def __init__(self, 
-                 data_dir, 
-                 split, 
-                 normalize_rgb, 
+    def __init__(self,
+                 data_dir,
+                 split,
+                 normalize_rgb,
                  donotcare_class_ids = [],
                  max_num_point=None,) -> None:
         self.data_dir = data_dir
@@ -325,21 +325,21 @@ class ScanNet(Dataset):
         else:
             self.scan_dir = os.path.join(data_dir, 'scans')
         self.metadata_path = os.path.join(self.data_dir, "metadata")
-        self.label_map_file = os.path.join(self.metadata_path, 
+        self.label_map_file = os.path.join(self.metadata_path,
                                            "scannetv2-labels.combined.tsv")
-        split_file = os.path.join(self.metadata_path, 
+        split_file = os.path.join(self.metadata_path,
                                   "scannetv2_{}.txt".format(split))
         self.scan_names = self.read_scan_names(split_file)
         self.normalize_rgb = normalize_rgb
         self.donotcare_class_ids = donotcare_class_ids
         self.max_num_point = max_num_point
-        
+
     def read_scan_names(self, split_file):
         with open(split_file) as f:
             scan_names = sorted([line.rstrip() for line in f])
             f.close()
         return scan_names
-        
+
     @staticmethod
     def read_one_test_scan(scannet_dir, scan_name, normalize_rgb):
         mesh_file = os.path.join(scannet_dir, scan_name, scan_name + "_vh_clean_2.ply")
@@ -400,14 +400,14 @@ class ScanNet(Dataset):
         data["instance_labels"] = torch.from_numpy(instance_labels)
 
         return Data(**data)
-    
+
     def __getitem__(self, index) -> T_co:
         if self.split == 'test':
-            data = ScanNet.read_one_test_scan(self.scan_dir, 
+            data = ScanNet.read_one_test_scan(self.scan_dir,
                                               self.scan_names[index],
                                               normalize_rgb=self.normalize_rgb)
         else:
-            data = ScanNet.read_one_scan(self.scan_dir, 
+            data = ScanNet.read_one_scan(self.scan_dir,
                                          self.scan_names[index],
                                          label_map_file=self.label_map_file,
                                          donotcare_class_ids=self.donotcare_class_ids,
@@ -415,7 +415,7 @@ class ScanNet(Dataset):
                                          normalize_rgb=self.normalize_rgb
                                          )
         return data
-    
+
 class ScanNetDataModule(Base3dDataModule):
     def __init__(
         self,
@@ -483,23 +483,22 @@ class ScanNetDataModule(Base3dDataModule):
         if self.version == "v2":
             download_label_map(self.data_dir)
             download_release(
-                release_test_scans, out_dir_test_scans, file_types_test, 
+                release_test_scans, out_dir_test_scans, file_types_test,
                 use_v1_sens=True)
-    
+
     def setup(self, stage: Optional[str] = None):
-        self.data_train = ScanNet(self.data_dir, 
-                                  split='train', 
+        self.data_train = ScanNet(self.data_dir,
+                                  split='train',
                                   normalize_rgb=self.normalize_rgb,
                                   donotcare_class_ids=self.donotcare_class_ids,
                                   max_num_point=self.max_num_point)
-        self.data_val = ScanNet(self.data_dir, 
-                                split='val', 
+        self.data_val = ScanNet(self.data_dir,
+                                split='val',
                                 normalize_rgb=self.normalize_rgb,
                                 donotcare_class_ids=self.donotcare_class_ids,
                                 max_num_point=self.max_num_point)
-        self.data_val = ScanNet(self.data_dir, 
-                                split='test', 
+        self.data_val = ScanNet(self.data_dir,
+                                split='test',
                                 normalize_rgb=self.normalize_rgb,
                                 donotcare_class_ids=self.donotcare_class_ids,
                                 max_num_point=self.max_num_point)
-        
