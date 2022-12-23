@@ -493,14 +493,13 @@ class ScanNetDataModule(Base3dDataModule):
                                   donotcare_class_ids=self.donotcare_class_ids,
                                   max_num_point=self.max_num_point)
         self.data_val = ScanNet(self.data_dir, 
-                                  split='val', 
-                                  normalize_rgb=self.normalize_rgb,
-                                  donotcare_class_ids=self.donotcare_class_ids,
-                                  max_num_point=self.max_num_point)
+                                split='val', 
+                                normalize_rgb=self.normalize_rgb,
+                                donotcare_class_ids=self.donotcare_class_ids,
+                                max_num_point=self.max_num_point)
         self.data_val = ScanNet(self.data_dir, 
-                                  split='test', 
-                                  normalize_rgb=self.normalize_rgb,
-                                  donotcare_class_ids=self.donotcare_class_ids,
-                                  max_num_point=self.max_num_point)
-        return super().setup(stage)
+                                split='test', 
+                                normalize_rgb=self.normalize_rgb,
+                                donotcare_class_ids=self.donotcare_class_ids,
+                                max_num_point=self.max_num_point)
         
