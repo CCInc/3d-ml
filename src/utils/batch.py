@@ -14,9 +14,8 @@ class SimpleBatch(Data):
 
     @staticmethod
     def from_data_list(data_list):
-        r"""Constructs a batch object from a python list holding
-        :class:`torch_geometric.data.Data` objects.
-        """
+        r"""Constructs a batch object from a python list holding :class:`torch_geometric.data.Data`
+        objects."""
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
 
